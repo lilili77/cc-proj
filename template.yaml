@@ -2,6 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: An AWS Serverless Specification template describing your function.
 Resources:
+  # LF0
   LF0Role:
     Type: AWS::IAM::Role
     Properties:
@@ -53,10 +54,67 @@ Resources:
       FunctionName: 'proj-LF0'
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
-      CodeUri: .
+      CodeUri: ./LF0
       Description: ''
       MemorySize: 128
       Timeout: 3
       Role: !GetAtt LF0Role.Arn
 
-# test
+  # LF1
+
+  LF1Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: |
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": "sts:AssumeRole"
+                }
+            ]
+        }
+      # ManagedPolicyArns:
+      #   - arn:aws:iam::aws:policy/AmazonRekognitionFullAccess
+      #   - arn:aws:iam::aws:policy/AmazonOpenSearchServiceFullAccess
+      Policies:
+        - PolicyName: LF1BasicExecutionInlinePolicy
+          PolicyDocument: |
+            {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Action": [
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                            "arn:aws:logs:us-east-1:037747959865:log-group:/aws/lambda/proj-LF1:*"
+                        ]
+                    }
+                ]
+            }
+
+  LF1LogGroup:
+        Type: AWS::Logs::LogGroup
+        Properties:
+            LogGroupName: '/aws/lambda/proj-LF1'
+            RetentionInDays: 30
+
+  LF1:
+    Type: 'AWS::Serverless::Function'
+    DependsOn: LF1LogGroup
+    Properties:
+      FunctionName: 'proj-LF1'
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./LF1
+      Description: ''
+      MemorySize: 128
+      Timeout: 3
+      Role: !GetAtt LF1Role.Arn
