@@ -147,3 +147,109 @@ Resources:
       MemorySize: 128
       Timeout: 3
       Role: !GetAtt LF1Role.Arn
+
+
+# API gateway
+  RestApi :
+    Type : AWS::ApiGateway::RestApi
+    Properties :
+      Body :
+        ---
+        swagger: "2.0"
+        # info:
+        #   version: "2022-04-02T06:36:48Z"
+        #   title: "Proj-api-test"
+        # host: "gdq3st050h.execute-api.us-east-1.amazonaws.com"
+        basePath: "/dev"
+        schemes:
+        - "https"
+        paths:
+          /image/{imgkey}:
+            post:
+              produces:
+              - "application/json"
+              parameters:
+              - name: "imgkey"
+                in: "path"
+                required: true
+                type: "string"
+              responses:
+                "200":
+                  description: "200 response"
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: "string"
+              x-amazon-apigateway-integration:
+                httpMethod: "POST"
+                uri: !Join
+                  - ''
+                  - - "arn:aws:apigateway:"
+                    - !Sub ${AWS::Region}
+                    - ":lambda:path/2015-03-31/functions/"
+                    - !GetAtt LF0.Arn
+                    - "/invocations"
+
+                responses:
+                  default:
+                    statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                passthroughBehavior: "when_no_match"
+                contentHandling: "CONVERT_TO_TEXT"
+                type: "aws_proxy"
+            options:
+              consumes:
+              - "application/json"
+              produces:
+              - "application/json"
+              parameters:
+              - name: "imgkey"
+                in: "path"
+                required: true
+                type: "string"
+              responses:
+                "200":
+                  description: "200 response"
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: "string"
+                    Access-Control-Allow-Methods:
+                      type: "string"
+                    Access-Control-Allow-Headers:
+                      type: "string"
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestTemplates:
+                  application/json: "{\"statusCode\": 200}"
+                passthroughBehavior: "when_no_match"
+                type: "mock"
+        definitions:
+          Empty:
+            type: "object"
+            title: "Empty Schema"
+        x-amazon-apigateway-binary-media-types:
+        - "image/jpg"
+
+      Parameters:
+        endpointConfigurationTypes: REGIONAL
+
+  Deployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      RestApiId: !Ref RestApi
+      Description: My deployment
+      StageName: stage1
+
+Outputs:
+  ApiUrl:
+    Value: !Sub https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/stage1
