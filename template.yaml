@@ -247,6 +247,9 @@ Resources:
       KeySchema:
         - AttributeName: id
           KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 20
+        WriteCapacityUnits: 20
 
 # ===== Outputs ============================================================
 Outputs:
