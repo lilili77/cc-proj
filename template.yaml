@@ -6,40 +6,56 @@ Resources:
   LF0Role:
     Type: AWS::IAM::Role
     Properties:
-      AssumeRolePolicyDocument: |
-        {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": {
-                        "Service": "lambda.amazonaws.com"
-                    },
-                    "Action": "sts:AssumeRole"
-                }
-            ]
-        }
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+        # {
+        #     "Version": "2012-10-17",
+        #     "Statement": [
+        #         {
+        #             "Effect": "Allow",
+        #             "Principal": {
+        #                 "Service": "lambda.amazonaws.com"
+        #             },
+        #             "Action": "sts:AssumeRole"
+        #         }
+        #     ]
+        # }
+
       # ManagedPolicyArns:
       #   - arn:aws:iam::aws:policy/AmazonRekognitionFullAccess
       #   - arn:aws:iam::aws:policy/AmazonOpenSearchServiceFullAccess
       Policies:
         - PolicyName: LF0BasicExecutionInlinePolicy
-          PolicyDocument: |
-            {
-                "Version": "2012-10-17",
-                "Statement": [
-                    {
-                        "Effect": "Allow",
-                        "Action": [
-                            "logs:CreateLogStream",
-                            "logs:PutLogEvents"
-                        ],
-                        "Resource": [
-                            "arn:aws:logs:us-east-1:037747959865:log-group:/aws/lambda/proj-LF0:*"
-                        ]
-                    }
-                ]
-            }
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource:
+                  - !sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/proj-LF0:*
+
+            # {
+            #     "Version": "2012-10-17",
+            #     "Statement": [
+            #         {
+            #             "Effect": "Allow",
+            #             "Action": [
+            #                 "logs:CreateLogStream",
+            #                 "logs:PutLogEvents"
+            #             ],
+            #             "Resource": [
+            #                 "arn:aws:logs:us-east-1:037747959865:log-group:/aws/lambda/proj-LF0:*"
+            #             ]
+            #         }
+            #     ]
+            # }
 
   LF0LogGroup:
         Type: AWS::Logs::LogGroup
@@ -65,40 +81,27 @@ Resources:
   LF1Role:
     Type: AWS::IAM::Role
     Properties:
-      AssumeRolePolicyDocument: |
-        {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": {
-                        "Service": "lambda.amazonaws.com"
-                    },
-                    "Action": "sts:AssumeRole"
-                }
-            ]
-        }
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
       # ManagedPolicyArns:
       #   - arn:aws:iam::aws:policy/AmazonRekognitionFullAccess
       #   - arn:aws:iam::aws:policy/AmazonOpenSearchServiceFullAccess
       Policies:
         - PolicyName: LF1BasicExecutionInlinePolicy
-          PolicyDocument: |
-            {
-                "Version": "2012-10-17",
-                "Statement": [
-                    {
-                        "Effect": "Allow",
-                        "Action": [
-                            "logs:CreateLogStream",
-                            "logs:PutLogEvents"
-                        ],
-                        "Resource": [
-                            "arn:aws:logs:us-east-1:037747959865:log-group:/aws/lambda/proj-LF1:*"
-                        ]
-                    }
-                ]
-            }
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource:
+                  - !sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/proj-LF1:*
 
   LF1LogGroup:
         Type: AWS::Logs::LogGroup
