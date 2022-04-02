@@ -102,6 +102,13 @@ Resources:
         Variables:
           ImgBucket: !Ref ImgBucket
 
+  LF0ApiInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref LF0
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/image/*
   # LF1
 
   LF1Role:
