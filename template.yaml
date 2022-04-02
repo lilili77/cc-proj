@@ -2,6 +2,30 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: An AWS Serverless Specification template describing your function.
 Resources:
+  ImgBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicReadWrite
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ImgBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action:
+              - 's3:GetObject'
+              - 's3:PutObject'
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref ImgBucket
+                - /*
+
   # LF0
   LF0Role:
     Type: AWS::IAM::Role
@@ -71,10 +95,13 @@ Resources:
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
       CodeUri: ./LF0
-      Description: ''
+      Description: 'Lambda function that upload photo to s3 and call ML endpoint to return a string'
       MemorySize: 128
       Timeout: 3
       Role: !GetAtt LF0Role.Arn
+      Environment:
+        Variables:
+          ImgBucket: !Ref ImgBucket
 
   # LF1
 
