@@ -50,9 +50,8 @@ Resources:
         #     ]
         # }
 
-      # ManagedPolicyArns:
-      #   - arn:aws:iam::aws:policy/AmazonRekognitionFullAccess
-      #   - arn:aws:iam::aws:policy/AmazonOpenSearchServiceFullAccess
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
       Policies:
         - PolicyName: LF0BasicExecutionInlinePolicy
           PolicyDocument:
