@@ -39,7 +39,7 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource:
-                  - !sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/proj-LF0:*
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/proj-LF0:*
 
             # {
             #     "Version": "2012-10-17",
@@ -101,7 +101,7 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource:
-                  - !sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/proj-LF1:*
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/proj-LF1:*
 
   LF1LogGroup:
         Type: AWS::Logs::LogGroup
