@@ -236,14 +236,6 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
-        - AttributeName: userId
-          AttributeType: S
-        - AttributeName: keywords
-          AttributeType: S
-        - AttributeName: dateSearched
-          AttributeType: S
-        - AttributeName: uploadedImageUrl
-          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
