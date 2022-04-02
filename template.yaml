@@ -2,6 +2,8 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: An AWS Serverless Specification template describing your function.
 Resources:
+
+# ===== Image Bucket ===========================================================
   ImgBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -26,7 +28,8 @@ Resources:
                 - !Ref ImgBucket
                 - /*
 
-  # LF0
+# ===== LF0 ====================================================================
+
   LF0Role:
     Type: AWS::IAM::Role
     Properties:
@@ -37,19 +40,6 @@ Resources:
             Principal:
               Service: "lambda.amazonaws.com"
             Action: "sts:AssumeRole"
-        # {
-        #     "Version": "2012-10-17",
-        #     "Statement": [
-        #         {
-        #             "Effect": "Allow",
-        #             "Principal": {
-        #                 "Service": "lambda.amazonaws.com"
-        #             },
-        #             "Action": "sts:AssumeRole"
-        #         }
-        #     ]
-        # }
-
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
       Policies:
@@ -63,22 +53,6 @@ Resources:
                   - "logs:PutLogEvents"
                 Resource:
                   - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/proj-LF0:*
-
-            # {
-            #     "Version": "2012-10-17",
-            #     "Statement": [
-            #         {
-            #             "Effect": "Allow",
-            #             "Action": [
-            #                 "logs:CreateLogStream",
-            #                 "logs:PutLogEvents"
-            #             ],
-            #             "Resource": [
-            #                 "arn:aws:logs:us-east-1:037747959865:log-group:/aws/lambda/proj-LF0:*"
-            #             ]
-            #         }
-            #     ]
-            # }
 
   LF0LogGroup:
         Type: AWS::Logs::LogGroup
@@ -109,7 +83,8 @@ Resources:
       FunctionName: !Ref LF0
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/image/*
-  # LF1
+
+# ===== LF1 ====================================================================
 
   LF1Role:
     Type: AWS::IAM::Role
@@ -156,17 +131,13 @@ Resources:
       Role: !GetAtt LF1Role.Arn
 
 
-# API gateway
+# ===== API gateway ============================================================
+
   RestApi :
     Type : AWS::ApiGateway::RestApi
     Properties :
       Body :
-        # ---
         swagger: "2.0"
-        # info:
-        #   version: "2022-04-02T06:36:48Z"
-        #   title: "Proj-api-test"
-        # host: "gdq3st050h.execute-api.us-east-1.amazonaws.com"
         basePath: "/dev"
         schemes:
         - "https"
@@ -257,6 +228,27 @@ Resources:
       Description: My deployment
       StageName: stage1
 
+# ===== Databases ==============================================================
+
+  SearchHistoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: keywords
+          AttributeType: S
+        - AttributeName: dateSearched
+          AttributeType: S
+        - AttributeName: uploadedImageUrl
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+# ===== Outputs ============================================================
 Outputs:
   ApiUrl:
     Value: !Sub https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/stage1
