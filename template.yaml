@@ -562,7 +562,7 @@ Resources:
                   application/json: | 
                     { 
                       "uid": "$input.params('uid')",
-                      "method": "GET"
+                      "method": "$context.httpMethod"
                     }
                 passthroughBehavior: "when_no_match"
                 contentHandling: "CONVERT_TO_TEXT"
