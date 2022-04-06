@@ -7,7 +7,21 @@ Parameters:
     Default: 42e34018-1b33-4d15-ab1b-f960f8a573a8
 
 Resources:
+
+# ===== Authentication ===========================================================
+  
+  ApiCognitoAuthorizer:          
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      IdentitySource: 'method.request.header.Authorization'
+      Name: ApiCognitoAuthorizer
+      ProviderARNs:
+        - 'arn:aws:cognito-idp:${AWS::Region}:{userpoolIdentifier}'
+      RestApiId: !Ref RestApi
+      Type: COGNITO_USER_POOLS
+
 # ===== Image Bucket ===========================================================
+  
   ImgBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -742,18 +756,6 @@ Resources:
       RestApiId: !Ref RestApi
       Description: My deployment
       StageName: stage1
-
-
-# ===== Authentication ===========================================================
-ApiCognitoAuthorizer:          
-  Type: AWS::ApiGateway::Authorizer
-  Properties:
-    IdentitySource: 'method.request.header.Authorization'
-    Name: ApiCognitoAuthorizer
-    ProviderARNs:
-      - 'arn:aws:cognito-idp:${AWS::Region}:{userpoolIdentifier}'
-    RestApiId: !Ref RestApi
-    Type: COGNITO_USER_POOLS
 
 # ===== Databases ==============================================================
 
