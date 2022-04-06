@@ -76,6 +76,7 @@ def validate(params):
 
 def lambda_handler(event, context):
     # TODO implement search function
+    print(event)
     errors, parsedParams = validate(event)
     if len(errors.keys()) > 0:
         return {
