@@ -380,7 +380,7 @@ Resources:
                     Access-Control-Allow-Origin:
                       type: "string"
               x-amazon-apigateway-integration:
-                type: aws
+                type: aws_proxy
                 httpMethod: "POST"
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF1.Arn}/invocations"
                 credentials: arn:aws:iam::210336890849:role/api-gateway-invoke-lambda
