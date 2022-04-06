@@ -372,8 +372,11 @@ Resources:
                     responseParameters:
                       method.response.header.Access-Control-Allow-Origin: "'*'"
                 requestTemplates:
-                  application/json: "{\n    \"q\":  \"$input.params('q')\"\
-                    \n}"
+                  application/json: | 
+                    { 
+                      "q": "$input.params('q')",
+                      "sort_by": "$input.params('sort_by')",
+                    }
                 passthroughBehavior: "when_no_match"
                 contentHandling: "CONVERT_TO_TEXT"
             options:
