@@ -299,6 +299,7 @@ Resources:
         - arn:aws:iam::aws:policy/CloudWatchFullAccess
         - arn:aws:iam::aws:policy/AmazonAPIGatewayAdministrator
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
       Policies:
         - PolicyName: LambdaCloudFormationBasicExecutionInlinePolicy
           PolicyDocument: |
@@ -317,7 +318,6 @@ Resources:
                     }
                 ]
             }
-
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
