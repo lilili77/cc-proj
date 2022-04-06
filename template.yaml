@@ -341,9 +341,14 @@ Resources:
           /search:
             get:
               consumes:
-              - "application/json"
+                - "application/json"
               produces:
-              - "application/json"
+                - "application/json"
+              parameters:
+                - name: "q"
+                  in: "query"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"
@@ -353,21 +358,19 @@ Resources:
                     Access-Control-Allow-Origin:
                       type: "string"
               x-amazon-apigateway-integration:
-                type: "aws_proxy"
+                type: aws
                 httpMethod: "POST"
-                uri: !Join
-                  - ''
-                  - - "arn:aws:apigateway:"
-                    - !Sub ${AWS::Region}
-                    - ":lambda:path/2015-03-31/functions/"
-                    - !GetAtt LF1.Arn
-                    - "/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF1.Arn}/invocations"
                 responses:
                   default:
                     statusCode: "200"
                     responseParameters:
                       method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestTemplates:
+                  application/json: "{\n    \"q\":  \"$input.params('q')\"\
+                    \n}"
                 passthroughBehavior: "when_no_match"
+                contentHandling: "CONVERT_TO_TEXT"
             options:
               consumes:
               - "application/json"
