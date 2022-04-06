@@ -16,7 +16,7 @@ Resources:
       IdentitySource: 'method.request.header.Authorization'
       Name: ApiCognitoAuthorizer
       ProviderARNs:
-        - 'arn:aws:cognito-idp:${AWS::Region}:{userpoolIdentifier}'
+        - !Sub 'arn:aws:cognito-idp:${AWS::Region}:{UserPoolId}'
       RestApiId: !Ref RestApi
       Type: COGNITO_USER_POOLS
 
