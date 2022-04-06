@@ -1,5 +1,6 @@
 import json
 
+
 ITEMS = [
     {"id": "1", "name": "Kitty 1",
         "imageUrl": "https://loremflickr.com/200/200", "price": "50.4", "created": '2022-03-10'},
@@ -43,14 +44,55 @@ ITEMS = [
         "imageUrl": "https://loremflickr.com/200/200", "price": "35.09", "created": '2022-04-03'},
 ]
 
+VALID_METHODS = ["GET", "POST", "DELETE"]
 
-def lambda_handler(event, context):
-    # TODO implement LF2
 
-    print(event, context)
+def validate(params):
+    uid = params["uid"]
+    method = params["method"]
+
+    errors = {}
+    parsedParams = {
+        "uid": uid,
+        "sort_by": "price"
+    }
+
+    if uid == "":
+        errors["uid"] = "'uid' can't be empty"
+    if method not in VALID_METHODS:
+        errors["method"] = f"'method' must be one of {VALID_METHODS}"
+
+    return errors, parsedParams
+
+
+def get_handler(uid):
     return {
         'statusCode': 200,
         'body': {
+            "uid": uid,
             "items": ITEMS
         }
+    }
+
+
+def lambda_handler(event, context):
+    # TODO implement LF2
+    print(event)
+
+    errors, parsedParams = validate(event)
+    if len(errors.keys()) > 0:
+        return {
+            'statusCode': 400,
+            'errors': errors
+        }
+
+    uid = parsedParams["uid"]
+    method = parsedParams["method"]
+
+    if method == 'GET':
+        return get_handler(uid)
+
+    return {
+        'statusCode': 200,
+        'body': "hi"
     }

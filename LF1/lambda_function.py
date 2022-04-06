@@ -58,7 +58,7 @@ def validate(params):
     q = params['q']
     sort_by = params['sort_by']
     parsedParams = {
-        "q": "",
+        "q": q,
         "sort_by": "price"
     }
     errors = {}
