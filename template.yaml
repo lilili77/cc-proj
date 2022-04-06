@@ -151,7 +151,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       FunctionName: !Ref LF1
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/search/*
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/search/*
 
 # ===== LF2 ====================================================================
   
@@ -350,13 +350,15 @@ Resources:
                   schema:
                     $ref: "#/definitions/Empty"
               x-amazon-apigateway-integration:
-                type: "mock"
-                responses:
-                  default:
-                    statusCode: "200"
-                requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
-                passthroughBehavior: "when_no_match"
+                type: "aws_proxy"
+                httpMethod: "POST"
+                uri: !Join
+                  - ''
+                  - - "arn:aws:apigateway:"
+                    - !Sub ${AWS::Region}
+                    - ":lambda:path/2015-03-31/functions/"
+                    - !GetAtt LF1.Arn
+                    - "/invocations"
             options:
               consumes:
               - "application/json"
