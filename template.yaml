@@ -4,7 +4,7 @@ Description: Complaza backend stack
 Parameters:
   UserPoolId:
     Type: String
-    Default: 42e34018-1b33-4d15-ab1b-f960f8a573a8
+    Default: 210336890849:userpool/us-east-1_9ofMqoqMr
 
 Resources:
 
