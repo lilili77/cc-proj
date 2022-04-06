@@ -196,11 +196,19 @@ Resources:
       Timeout: 3
       Role: !GetAtt LF2Role.Arn
 
+  LF2ApiInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref LF1
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/wishlist/*
+
 # ===== API gateway ============================================================
   
   RestApi :
     Type : AWS::ApiGateway::RestApi
-    Properties :
+    Properties:
       Parameters:
         endpointConfigurationTypes: REGIONAL
       Body:
@@ -211,6 +219,16 @@ Resources:
         basePath: "/stage1"
         schemes:
           - "https"
+        securityDefinitions:
+          ApiCognitoAuthorizer:
+            type: apiKey
+            name: Authorization
+            in: header
+            x-amazon-apigateway-authtype: cognito_user_pools
+            x-amazon-apigateway-authorizer:
+              type: cognito_user_pools
+              providerARNs:
+                - !Sub arn:aws:cognito-idp:${AWS::Region}:${UserPoolIdentifier}
         paths:
           /image/{imgkey}:
             post:
@@ -361,6 +379,8 @@ Resources:
                   headers:
                     Access-Control-Allow-Origin:
                       type: "string"
+              security:
+                - ApiCognitoAuthorizer: []
               x-amazon-apigateway-integration:
                 type: aws
                 httpMethod: "POST"
@@ -375,7 +395,7 @@ Resources:
                   application/json: | 
                     { 
                       "q": "$input.params('q')",
-                      "sort_by": "$input.params('sort_by')",
+                      "sort_by": "$input.params('sort_by')"
                     }
                 passthroughBehavior: "when_no_match"
                 contentHandling: "CONVERT_TO_TEXT"
@@ -520,16 +540,26 @@ Resources:
                   description: "200 response"
                   schema:
                     $ref: "#/definitions/Empty"
-              security:
-                - ApiCognitoAuthorizer
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: "string"
               x-amazon-apigateway-integration:
-                type: "mock"
+                type: aws
+                httpMethod: "POST"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF2.Arn}/invocations"
+                credentials: arn:aws:iam::210336890849:role/api-gateway-invoke-lambda
                 responses:
                   default:
                     statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
                 requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
+                  application/json: | 
+                    { 
+                      "uid": "$input.params('uid')"
+                    }
                 passthroughBehavior: "when_no_match"
+                contentHandling: "CONVERT_TO_TEXT"
             post:
               consumes:
               - "application/json"
@@ -657,16 +687,6 @@ Resources:
           Empty:
             type: "object"
             title: "Empty Schema"
-        securityDefinitions:
-          ApiCognitoAuthorizer:
-            type: apiKey
-            name: Authorization
-            in: header
-            x-amazon-apigateway-authtype: cognito_user_pools
-            x-amazon-apigateway-authorizer:
-              type: cognito_user_pools
-              providerARNs:
-                - !Sub arn:aws:cognito-idp:${AWS::Region}:${UserPoolIdentifier}
         x-amazon-apigateway-binary-media-types:
         - "image/jpg"
 
