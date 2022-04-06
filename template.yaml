@@ -1,8 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
-Description: An AWS Serverless Specification template describing your function.
-Resources:
+Description: Complaza backend stack
+Parameters:
+  UserPoolId:
+    Type: String
+    Default: 42e34018-1b33-4d15-ab1b-f960f8a573a8
 
+Resources:
 # ===== Image Bucket ===========================================================
   ImgBucket:
     Type: AWS::S3::Bucket
@@ -52,19 +56,19 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource:
-                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/proj-LF0:*
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/complaza-LF0:*
 
   LF0LogGroup:
         Type: AWS::Logs::LogGroup
         Properties:
-            LogGroupName: '/aws/lambda/proj-LF0'
+            LogGroupName: '/aws/lambda/complaza-LF0'
             RetentionInDays: 30
 
   LF0:
     Type: 'AWS::Serverless::Function'
     DependsOn: LF0LogGroup
     Properties:
-      FunctionName: 'proj-LF0'
+      FunctionName: 'complaza-LF0'
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
       CodeUri: ./LF0
@@ -106,19 +110,19 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource:
-                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/proj-LF1:*
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/complaza-LF1:*
 
   LF1LogGroup:
         Type: AWS::Logs::LogGroup
         Properties:
-            LogGroupName: '/aws/lambda/proj-LF1'
+            LogGroupName: '/aws/lambda/complaza-LF1'
             RetentionInDays: 30
 
   LF1:
     Type: 'AWS::Serverless::Function'
     DependsOn: LF1LogGroup
     Properties:
-      FunctionName: 'proj-LF1'
+      FunctionName: 'complaza-LF1'
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
       CodeUri: ./LF1
@@ -127,7 +131,7 @@ Resources:
       Timeout: 3
       Role: !GetAtt LF1Role.Arn
 
-   LF1ApiInvoke:
+  LF1ApiInvoke:
     Type: AWS::Lambda::Permission
     Properties:
       Action: "lambda:InvokeFunction"
@@ -136,7 +140,7 @@ Resources:
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/search/*
 
 # ===== LF2 ====================================================================
-
+  
   LF2Role:
     Type: AWS::IAM::Role
     Properties:
@@ -157,19 +161,19 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource:
-                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/proj-LF2:*
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/complaza-LF2:*
 
   LF2LogGroup:
         Type: AWS::Logs::LogGroup
         Properties:
-            LogGroupName: '/aws/lambda/proj-LF2'
+            LogGroupName: '/aws/lambda/complaza-LF2'
             RetentionInDays: 30
 
   LF2:
     Type: 'AWS::Serverless::Function'
     DependsOn: LF2LogGroup
     Properties:
-      FunctionName: 'proj-LF2'
+      FunctionName: 'complaza-LF2'
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
       CodeUri: ./LF2
@@ -178,9 +182,8 @@ Resources:
       Timeout: 3
       Role: !GetAtt LF2Role.Arn
 
-
 # ===== API gateway ============================================================
-
+  
   RestApi :
     Type : AWS::ApiGateway::RestApi
     Properties :
@@ -465,135 +468,6 @@ Resources:
                 requestTemplates:
                   application/json: "{\"statusCode\": 200}"
                 passthroughBehavior: "when_no_match"
-          /user:
-            post:
-              consumes:
-              - "application/json"
-              produces:
-              - "application/json"
-              responses:
-                "200":
-                  description: "200 response"
-                  schema:
-                    $ref: "#/definitions/Empty"
-              x-amazon-apigateway-integration:
-                type: "mock"
-                responses:
-                  default:
-                    statusCode: "200"
-                requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
-                passthroughBehavior: "when_no_match"
-            options:
-              consumes:
-              - "application/json"
-              produces:
-              - "application/json"
-              responses:
-                "200":
-                  description: "200 response"
-                  schema:
-                    $ref: "#/definitions/Empty"
-                  headers:
-                    Access-Control-Allow-Origin:
-                      type: "string"
-                    Access-Control-Allow-Methods:
-                      type: "string"
-                    Access-Control-Allow-Headers:
-                      type: "string"
-              x-amazon-apigateway-integration:
-                type: "mock"
-                responses:
-                  default:
-                    statusCode: "200"
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
-                      method.response.header.Access-Control-Allow-Origin: "'*'"
-                requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
-                passthroughBehavior: "when_no_match"
-          /user/{uid}:
-            get:
-              consumes:
-              - "application/json"
-              produces:
-              - "application/json"
-              parameters:
-              - name: "uid"
-                in: "path"
-                required: true
-                type: "string"
-              responses:
-                "200":
-                  description: "200 response"
-                  schema:
-                    $ref: "#/definitions/Empty"
-              x-amazon-apigateway-integration:
-                type: "mock"
-                responses:
-                  default:
-                    statusCode: "200"
-                requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
-                passthroughBehavior: "when_no_match"
-            put:
-              consumes:
-              - "application/json"
-              produces:
-              - "application/json"
-              parameters:
-              - name: "uid"
-                in: "path"
-                required: true
-                type: "string"
-              responses:
-                "200":
-                  description: "200 response"
-                  schema:
-                    $ref: "#/definitions/Empty"
-              x-amazon-apigateway-integration:
-                type: "mock"
-                responses:
-                  default:
-                    statusCode: "200"
-                requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
-                passthroughBehavior: "when_no_match"
-            options:
-              consumes:
-              - "application/json"
-              produces:
-              - "application/json"
-              parameters:
-              - name: "uid"
-                in: "path"
-                required: true
-                type: "string"
-              responses:
-                "200":
-                  description: "200 response"
-                  schema:
-                    $ref: "#/definitions/Empty"
-                  headers:
-                    Access-Control-Allow-Origin:
-                      type: "string"
-                    Access-Control-Allow-Methods:
-                      type: "string"
-                    Access-Control-Allow-Headers:
-                      type: "string"
-              x-amazon-apigateway-integration:
-                type: "mock"
-                responses:
-                  default:
-                    statusCode: "200"
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
-                      method.response.header.Access-Control-Allow-Origin: "'*'"
-                requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
-                passthroughBehavior: "when_no_match"
           /wishlist/{uid}:
             get:
               consumes:
@@ -675,6 +549,16 @@ Resources:
                 requestTemplates:
                   application/json: "{\"statusCode\": 200}"
                 passthroughBehavior: "when_no_match"
+            securityDefinitions:
+              ApiCognitoAuthorizer:
+                type: apiKey
+                name: Authorization
+                in: header
+                x-amazon-apigateway-authtype: cognito_user_pools
+                x-amazon-apigateway-authorizer:
+                  type: cognito_user_pools
+                  providerARNs:
+                    - !Sub arn:aws:cognito-idp:{AWS::Region}:{UserPoolId}
           /wishlist/{uid}/{pid}:
             delete:
               consumes:
@@ -858,6 +742,18 @@ Resources:
       RestApiId: !Ref RestApi
       Description: My deployment
       StageName: stage1
+
+
+# ===== Authentication ===========================================================
+ApiCognitoAuthorizer:          
+  Type: AWS::ApiGateway::Authorizer
+  Properties:
+    IdentitySource: 'method.request.header.Authorization'
+    Name: ApiCognitoAuthorizer
+    ProviderARNs:
+      - 'arn:aws:cognito-idp:${AWS::Region}:{userpoolIdentifier}'
+    RestApiId: !Ref RestApi
+    Type: COGNITO_USER_POOLS
 
 # ===== Databases ==============================================================
 

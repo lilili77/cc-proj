@@ -1,6 +1,7 @@
 import json
 
 def lambda_handler(event, context):
+    # TODO implement LF1
     print(event)
     
     return {
