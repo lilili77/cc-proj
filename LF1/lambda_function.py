@@ -10,12 +10,12 @@ ITEMS = [
 
 def lambda_handler(event, context):
     # TODO implement search function
-
-    print(event)
+    q = event['q']
 
     return {
         'statusCode': 200,
         'body': {
+            "q": q,
             "count": len(ITEMS),
             "items": ITEMS
         }
