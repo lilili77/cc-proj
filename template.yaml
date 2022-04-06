@@ -561,7 +561,8 @@ Resources:
                 requestTemplates:
                   application/json: | 
                     { 
-                      "uid": "$input.params('uid')"
+                      "uid": "$input.params('uid')",
+                      "method": "GET"
                     }
                 passthroughBehavior: "when_no_match"
                 contentHandling: "CONVERT_TO_TEXT"
