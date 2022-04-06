@@ -349,6 +349,9 @@ Resources:
                   description: "200 response"
                   schema:
                     $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: "string"
               x-amazon-apigateway-integration:
                 type: "aws_proxy"
                 httpMethod: "POST"
@@ -359,6 +362,12 @@ Resources:
                     - ":lambda:path/2015-03-31/functions/"
                     - !GetAtt LF1.Arn
                     - "/invocations"
+                responses:
+                  default:
+                    statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                passthroughBehavior: "when_no_match"
             options:
               consumes:
               - "application/json"
