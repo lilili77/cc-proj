@@ -193,7 +193,7 @@ Resources:
         swagger: "2.0"
         info:
           version: "1"
-          title: "Project API"
+          title: "Complaza API"
         basePath: "/stage1"
         schemes:
         - "https"

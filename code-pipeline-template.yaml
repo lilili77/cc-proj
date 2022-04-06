@@ -370,7 +370,7 @@ Resources:
                 Provider: CloudFormation
               Configuration:
                 ActionMode: CHANGE_SET_REPLACE
-                StackName: Project-Backend-Stack
+                StackName: complaza-backend
                 ChangeSetName: ChangeSet
                 RoleArn: !GetAtt DeployCloudFormationServiceRole.Arn
                 TemplatePath: ClientBuild::output-template.yaml
@@ -389,7 +389,7 @@ Resources:
                 Version: '1'
               Configuration:
                 ActionMode: CHANGE_SET_EXECUTE
-                StackName: Project-Backend-Stack
+                StackName: complaza-backend
                 ChangeSetName: ChangeSet
               OutputArtifacts: []
               InputArtifacts:
