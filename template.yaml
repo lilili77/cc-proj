@@ -349,6 +349,10 @@ Resources:
                   in: "query"
                   required: true
                   type: "string"
+                - name: "sort_by"
+                  in: "query"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"

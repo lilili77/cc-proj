@@ -51,15 +51,46 @@ RETAILERS = [
     {"name": "Shopee", "url": "https://shopee.com"},
 ]
 
+VALID_SORTBY = ['price', 'relevance']
+
+
+def validate(params):
+    q = params['q']
+    sort_by = params['sort_by']
+    parsedParams = {
+        "q": "",
+        "sort_by": "price"
+    }
+    errors = {}
+
+    if q == "":
+        errors["q"] = "'q' can't be empty"
+    if sort_by != "":
+        if sort_by not in VALID_SORTBY:
+            errors["sort_by"] = f"'sort_by' must be one of {VALID_SORTBY}"
+        else:
+            parsedParams["sort_by"] = sort_by
+
+    return errors, parsedParams
+
 
 def lambda_handler(event, context):
     # TODO implement search function
-    q = event['q']
+    errors, parsedParams = validate(event)
+    if len(errors.keys()) > 0:
+        return {
+            'statusCode': 400,
+            'errors': errors
+        }
+
+    q = parsedParams['q']
+    sortBy = parsedParams['sort_by']
 
     return {
         'statusCode': 200,
         'body': {
             "q": q,
+            "sort_by": sortBy,
             "count": len(ITEMS),
             "retailers": RETAILERS,
             "items": {
