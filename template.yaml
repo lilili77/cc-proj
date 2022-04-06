@@ -203,14 +203,14 @@ Resources:
     Properties :
       Parameters:
         endpointConfigurationTypes: REGIONAL
-      Body :
+      Body:
         swagger: "2.0"
         info:
           version: "1"
           title: "Complaza API"
         basePath: "/stage1"
         schemes:
-        - "https"
+          - "https"
         paths:
           /image/{imgkey}:
             post:
@@ -361,6 +361,7 @@ Resources:
                 type: aws
                 httpMethod: "POST"
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF1.Arn}/invocations"
+                credentials: arn:aws:iam::210336890849:role/api-gateway-invoke-lambda
                 responses:
                   default:
                     statusCode: "200"
