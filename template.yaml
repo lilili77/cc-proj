@@ -389,6 +389,9 @@ Resources:
                     statusCode: "200"
                     responseParameters:
                       method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestParameters:
+                  integration.request.querystring.q: "method.request.querystring.q"
+                  integration.request.querystring.sort_by: "method.request.querystring.sort_by"
                 requestTemplates:
                   application/json: | 
                     { 
