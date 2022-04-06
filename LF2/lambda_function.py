@@ -54,7 +54,7 @@ def validate(params):
     errors = {}
     parsedParams = {
         "uid": uid,
-        "sort_by": "price"
+        "method": method
     }
 
     if uid == "":
@@ -77,7 +77,7 @@ def get_handler(uid):
 
 def lambda_handler(event, context):
     # TODO implement LF2
-    print(event)
+    print(event, context)
 
     errors, parsedParams = validate(event)
     if len(errors.keys()) > 0:
