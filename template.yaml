@@ -581,35 +581,8 @@ Resources:
                   description: "200 response"
                   schema:
                     $ref: "#/definitions/Empty"
-              x-amazon-apigateway-integration:
-                type: "mock"
-                responses:
-                  default:
-                    statusCode: "200"
-                requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
-                passthroughBehavior: "when_no_match"
-            options:
-              consumes:
-                - "application/json"
-              produces:
-                - "application/json"
-              parameters:
-                - name: "uid"
-                  in: "path"
-                  required: true
-                  type: "string"
-              responses:
-                "200":
-                  description: "200 response"
-                  schema:
-                    $ref: "#/definitions/Empty"
                   headers:
                     Access-Control-Allow-Origin:
-                      type: "string"
-                    Access-Control-Allow-Methods:
-                      type: "string"
-                    Access-Control-Allow-Headers:
                       type: "string"
               security:
                 - ApiCognitoAuthorizer: []
@@ -633,26 +606,63 @@ Resources:
                     }
                 passthroughBehavior: "when_no_match"
                 contentHandling: "CONVERT_TO_TEXT"
-          /wishlist/{uid}/{pid}:
-            delete:
+            options:
               consumes:
-              - "application/json"
+                - "application/json"
               produces:
-              - "application/json"
+                - "application/json"
               parameters:
-              - name: "uid"
-                in: "path"
-                required: true
-                type: "string"
-              - name: "pid"
-                in: "path"
-                required: true
-                type: "string"
+                - name: "uid"
+                  in: "path"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"
                   schema:
                     $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: "string"
+                    Access-Control-Allow-Methods:
+                      type: "string"
+                    Access-Control-Allow-Headers:
+                      type: "string"
+              x-amazon-apigateway-integration:
+                type: "mock"
+                responses:
+                  default:
+                    statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestTemplates:
+                  application/json: "{\"statusCode\": 200}"
+                passthroughBehavior: "when_no_match"
+          /wishlist/{uid}/{pid}:
+            delete:
+              consumes:
+                - "application/json"
+              produces:
+                - "application/json"
+              parameters:
+                - name: "uid"
+                  in: "path"
+                  required: true
+                  type: "string"
+                - name: "pid"
+                  in: "path"
+                  required: true
+                  type: "string"
+              responses:
+                "200":
+                  description: "200 response"
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: "string"
               security:
                 - ApiCognitoAuthorizer: []
               x-amazon-apigateway-integration:
