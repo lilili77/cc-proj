@@ -1,4 +1,6 @@
 import json
+import os
+from time import pthread_getcpuclockid
 
 
 ITEMS = [
@@ -102,8 +104,11 @@ def delete_handler(uid, pid):
 
 
 def lambda_handler(event, context):
-    print(event, context)
 
+    wishlistTable = os.environ.get('WishlistTable')
+    productTable = os.environ.get('ProductTable')
+
+    print(wishlistTable, productTable)
     errors, parsedParams = validate(event)
     if len(errors.keys()) > 0:
         return {

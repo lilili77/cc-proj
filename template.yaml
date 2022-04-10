@@ -46,6 +46,61 @@ Resources:
                 - !Ref ImgBucket
                 - /*
 
+
+# ===== Databases ==============================================================
+
+  SearchHistoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 20
+        WriteCapacityUnits: 20
+
+  ProductTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 20
+        WriteCapacityUnits: 20
+
+  WishlistTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: pid
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pid
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 20
+        WriteCapacityUnits: 20
+
+  PriceHistoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: pid
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pid
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 20
+        WriteCapacityUnits: 20
+
 # ===== LF0 ====================================================================
 
   LF0Role:
@@ -165,6 +220,8 @@ Resources:
             Principal:
               Service: "lambda.amazonaws.com"
             Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
       Policies:
         - PolicyName: LF2BasicExecutionInlinePolicy
           PolicyDocument:
@@ -191,16 +248,20 @@ Resources:
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
       CodeUri: ./LF2
-      Description: ''
+      Description: 'Interaction with the wishlist table'
       MemorySize: 128
       Timeout: 3
       Role: !GetAtt LF2Role.Arn
+      Environment:
+        Variables:
+          WishlistTable: !Ref WishlistTable
+          ProductTable: !Ref ProductTable
 
   LF2ApiInvoke:
     Type: AWS::Lambda::Permission
     Properties:
       Action: "lambda:InvokeFunction"
-      FunctionName: !Ref LF1
+      FunctionName: !Ref LF2
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/wishlist/*
 
@@ -732,170 +793,12 @@ Resources:
         x-amazon-apigateway-binary-media-types:
         - "image/jpg"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      #   swagger: "2.0"
-      #   info:
-      #     description: "Project API"
-      #     version: "1.0.0"
-      #     title: "Project API"
-      #   basePath: "/dev"
-      #   schemes:
-      #   - "https"
-      #   paths:
-      #     /image/{imgkey}:
-      #       post:
-      #         produces:
-      #         - "application/json"
-      #         parameters:
-      #         - name: "imgkey"
-      #           in: "path"
-      #           required: true
-      #           type: "string"
-      #         responses:
-      #           "200":
-      #             description: "200 response"
-      #             schema:
-      #               $ref: "#/definitions/Empty"
-      #             headers:
-      #               Access-Control-Allow-Origin:
-      #                 type: "string"
-      #         x-amazon-apigateway-integration:
-      #           httpMethod: "POST"
-      #           uri: !Join
-      #             - ''
-      #             - - "arn:aws:apigateway:"
-      #               - !Sub ${AWS::Region}
-      #               - ":lambda:path/2015-03-31/functions/"
-      #               - !GetAtt LF0.Arn
-      #               - "/invocations"
-      #
-      #           responses:
-      #             default:
-      #               statusCode: "200"
-      #               responseParameters:
-      #                 method.response.header.Access-Control-Allow-Origin: "'*'"
-      #           passthroughBehavior: "when_no_match"
-      #           contentHandling: "CONVERT_TO_TEXT"
-      #           type: "aws_proxy"
-      #       options:
-      #         consumes:
-      #         - "application/json"
-      #         produces:
-      #         - "application/json"
-      #         parameters:
-      #         - name: "imgkey"
-      #           in: "path"
-      #           required: true
-      #           type: "string"
-      #         responses:
-      #           "200":
-      #             description: "200 response"
-      #             schema:
-      #               $ref: "#/definitions/Empty"
-      #             headers:
-      #               Access-Control-Allow-Origin:
-      #                 type: "string"
-      #               Access-Control-Allow-Methods:
-      #                 type: "string"
-      #               Access-Control-Allow-Headers:
-      #                 type: "string"
-      #         x-amazon-apigateway-integration:
-      #           responses:
-      #             default:
-      #               statusCode: "200"
-      #               responseParameters:
-      #                 method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
-      #                 method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-      #                 method.response.header.Access-Control-Allow-Origin: "'*'"
-      #           requestTemplates:
-      #             application/json: "{\"statusCode\": 200}"
-      #           passthroughBehavior: "when_no_match"
-      #           type: "mock"
-      #   definitions:
-      #     Empty:
-      #       type: "object"
-      #       title: "Empty Schema"
-      #   x-amazon-apigateway-binary-media-types:
-      #   - "image/jpg"
-      #
-      # Parameters:
-      #   endpointConfigurationTypes: REGIONAL
-
   Deployment:
     Type: 'AWS::ApiGateway::Deployment'
     Properties:
       RestApiId: !Ref RestApi
       Description: Complaza api deployment
       StageName: stage1
-
-# ===== Databases ==============================================================
-
-  SearchHistoryTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 20
-        WriteCapacityUnits: 20
-
-  ProductTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 20
-        WriteCapacityUnits: 20
-
-  WishlistTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: pid
-          AttributeType: S
-      KeySchema:
-        - AttributeName: pid
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 20
-        WriteCapacityUnits: 20
-
-  PriceHistoryTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: pid
-          AttributeType: S
-      KeySchema:
-        - AttributeName: pid
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 20
-        WriteCapacityUnits: 20
 
 # ===== Outputs ============================================================
 Outputs:
