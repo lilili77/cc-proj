@@ -611,18 +611,28 @@ Resources:
                       type: "string"
                     Access-Control-Allow-Headers:
                       type: "string"
+              security:
+                - ApiCognitoAuthorizer: []
               x-amazon-apigateway-integration:
-                type: "mock"
+                type: aws
+                httpMethod: "POST"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF2.Arn}/invocations"
+                credentials: arn:aws:iam::210336890849:role/api-gateway-invoke-lambda
                 responses:
                   default:
                     statusCode: "200"
                     responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
                       method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestParameters:
+                  integration.request.querystring.uid: "method.request.path.uid"
                 requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
+                  application/json: | 
+                    { 
+                      "uid": "$input.params('uid')",
+                      "method": "$context.httpMethod"
+                    }
                 passthroughBehavior: "when_no_match"
+                contentHandling: "CONVERT_TO_TEXT"
           /wishlist/{uid}/{pid}:
             delete:
               consumes:
@@ -643,14 +653,30 @@ Resources:
                   description: "200 response"
                   schema:
                     $ref: "#/definitions/Empty"
+              security:
+                - ApiCognitoAuthorizer: []
               x-amazon-apigateway-integration:
-                type: "mock"
+                type: aws
+                httpMethod: "POST"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF2.Arn}/invocations"
+                credentials: arn:aws:iam::210336890849:role/api-gateway-invoke-lambda
                 responses:
                   default:
                     statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestParameters:
+                  integration.request.querystring.uid: "method.request.path.uid"
+                  integration.request.querystring.pid: "method.request.path.pid"
                 requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
+                  application/json: | 
+                    { 
+                      "uid": "$input.params('uid')",
+                      "pid": "$input.params('pid')",
+                      "method": "$context.httpMethod"
+                    }
                 passthroughBehavior: "when_no_match"
+                contentHandling: "CONVERT_TO_TEXT"
             options:
               consumes:
               - "application/json"
@@ -810,19 +836,6 @@ Resources:
 # ===== Databases ==============================================================
 
   SearchHistoryTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 20
-        WriteCapacityUnits: 20
-
-  UserTable:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:

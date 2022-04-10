@@ -57,10 +57,16 @@ def validate(params):
         "method": method
     }
 
-    if uid == "":
-        errors["uid"] = "'uid' can't be empty"
     if method not in VALID_METHODS:
         errors["method"] = f"'method' must be one of {VALID_METHODS}"
+    if uid == "":
+        errors["uid"] = "'uid' can't be empty"
+
+    if method == "POST":
+        pid = params["pid"]
+        parsedParams["pid"] = pid
+        if pid == "":
+            errors["pid"] = "'pid' can't be empty"
 
     return errors, parsedParams
 
@@ -75,8 +81,27 @@ def get_handler(uid):
     }
 
 
+def post_handler(uid):
+    return {
+        'statusCode': 200,
+        'body': {
+            "uid": uid,
+            "item": {}
+        }
+    }
+
+
+def delete_handler(uid, pid):
+    return {
+        'statusCode': 200,
+        'body': {
+            "uid": uid,
+            "item": {}
+        }
+    }
+
+
 def lambda_handler(event, context):
-    # TODO implement LF2
     print(event, context)
 
     errors, parsedParams = validate(event)
@@ -89,8 +114,13 @@ def lambda_handler(event, context):
     uid = parsedParams["uid"]
     method = parsedParams["method"]
 
-    if method == 'GET':
+    if method == "GET":
         return get_handler(uid)
+    if method == "POST":
+        return post_handler(uid)
+    if method == "DELETE":
+        pid = parsedParams["pid"]
+        return delete_handler(uid)
 
     return {
         'statusCode': 200,
