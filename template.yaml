@@ -5,7 +5,7 @@ Parameters:
   UserPoolIdentifier:
     Type: String
     Default: 210336890849:userpool/us-east-1_9ofMqoqMr
-  RapidAPI-Key:
+  RapidAPIKey:
     Type: String
 
 Resources:
@@ -205,7 +205,7 @@ Resources:
       Role: !GetAtt LF1Role.Arn
       Environment:
         Variables:
-          RapidAPI-Key: !Ref RapidAPI-Key
+          RapidAPIKey: !Ref RapidAPIKey
       Layers:
         - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
 
