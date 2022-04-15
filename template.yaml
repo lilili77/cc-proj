@@ -201,7 +201,7 @@ Resources:
       CodeUri: ./LF1
       Description: "Call 3rd party APIs to fullfil search and save to user's search history"
       MemorySize: 128
-      Timeout: 10
+      Timeout: 20
       Role: !GetAtt LF1Role.Arn
       Environment:
         Variables:
