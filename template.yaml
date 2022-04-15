@@ -148,6 +148,8 @@ Resources:
       Environment:
         Variables:
           ImgBucket: !Ref ImgBucket
+      Layers:
+        - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
 
   LF0ApiInvoke:
     Type: AWS::Lambda::Permission
@@ -199,6 +201,8 @@ Resources:
       MemorySize: 128
       Timeout: 3
       Role: !GetAtt LF1Role.Arn
+      Layers:
+        - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
 
   LF1ApiInvoke:
     Type: AWS::Lambda::Permission
