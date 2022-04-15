@@ -75,6 +75,7 @@ def validate(params):
 
     return errors, parsedParams
 
+
 # Unlimited calls per mo
 def ebay_call(query):
     """
@@ -95,6 +96,7 @@ def ebay_call(query):
     print("Ebay return:", response.text)
     response = response.json()
     return response['products'][1:]
+
 
 # IMPORTANT only 200 calls per mo is free!!!
 def amazon_call(query):
@@ -130,8 +132,8 @@ def amazon_call(query):
     response = response.json()
     return response['docs']
     
+    
 def lambda_handler(event, context):
-    # TODO implement search function
     print(event)
     errors, parsedParams = validate(event)
     if len(errors.keys()) > 0:
@@ -149,6 +151,8 @@ def lambda_handler(event, context):
     
     # Amazon: Only first 200 calls is free!!!
     # amazon_call("notebook")
+    
+    # TODO: Shopee API, Parse API returns, Add to user search hist db
 
     return {
         'statusCode': 200,
