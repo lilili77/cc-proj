@@ -75,6 +75,7 @@ def validate(params):
 
     return errors, parsedParams
 
+# Unlimited calls per mo
 def ebay_call(query):
     """
     Ebay external API call
@@ -82,6 +83,7 @@ def ebay_call(query):
     Return: list of item
         Each item is dict with keys: id(start from idx 1), name, price, image, link
     Latency: 4,193ms
+    Pricing: $5.00/mo; Unlimited
     """
     url = "https://ebay-product-search-scraper.p.rapidapi.com/index.php"
     querystring = {"query":query}
@@ -94,6 +96,40 @@ def ebay_call(query):
     response = response.json()
     return response['products'][1:]
 
+# IMPORTANT only 200 calls per mo is free!!!
+def amazon_call(query):
+    """
+    Amazon external API call
+    Para: query:string
+    Return: list of items
+        item example
+        {
+            "isBestSeller": true,
+            "product_title": "AMD Ryzen 9 5900X 12-core, 24-Thread Unlocked Desktop Processor",
+            "product_main_image_url": "https://m.media-amazon.com/images/I/616VM20+AzL._AC_UY218_.jpg",
+            "app_sale_price": "384.10",
+            "app_sale_price_currency": "$",
+            "isPrime": true,
+            "product_detail_url": "https://www.amazon.com/dp/B08164VTWH",
+            "product_id": "B08164VTWH",
+            "evaluate_rate": "4.8 out of 5 stars",
+            "original_price": "$569.99"
+        }
+    Latency: 8,198ms
+    Pricing: $0.00/mo; 200/mo; Hard Limit
+    """
+    url = "https://amazon24.p.rapidapi.com/api/product"
+    # Optional: "categoryID":"aps"
+    querystring = {"keyword":query,"country":"US","page":"1"}
+    headers = {
+    	"X-RapidAPI-Host": "amazon24.p.rapidapi.com",
+    	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
+    }
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    print("Amazon return:", response.text)
+    response = response.json()
+    return response['docs']
+    
 def lambda_handler(event, context):
     # TODO implement search function
     print(event)
@@ -107,8 +143,12 @@ def lambda_handler(event, context):
     q = parsedParams['q']
     sortBy = parsedParams['sort_by']
     
-    # Ebay API call
+    # External API call
+    # Ebay: Unlimited calls
     ebay_call("gpu")
+    
+    # Amazon: Only first 200 calls is free!!!
+    # amazon_call("notebook")
 
     return {
         'statusCode': 200,
