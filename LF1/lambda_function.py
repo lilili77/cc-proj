@@ -1,4 +1,6 @@
 import json
+import requests
+import os
 
 ITEMS = [
     {"id": "1", "name": "Kitty 1",
@@ -73,6 +75,24 @@ def validate(params):
 
     return errors, parsedParams
 
+def ebay_call(query):
+    """
+    Ebay external API call
+    Para: query:string
+    Return: list of item
+        Each item is dict with keys: id(start from idx 1), name, price, image, link
+    Latency: 4,193ms
+    """
+    url = "https://ebay-product-search-scraper.p.rapidapi.com/index.php"
+    querystring = {"query":query}
+    headers = {
+    	"X-RapidAPI-Host": "ebay-product-search-scraper.p.rapidapi.com",
+    	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
+    }
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    print("Ebay return:", response.text)
+    response = response.json()
+    return response['products'][1:]
 
 def lambda_handler(event, context):
     # TODO implement search function
@@ -86,6 +106,9 @@ def lambda_handler(event, context):
 
     q = parsedParams['q']
     sortBy = parsedParams['sort_by']
+    
+    # Ebay API call
+    ebay_call("gpu")
 
     return {
         'statusCode': 200,
