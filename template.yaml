@@ -277,6 +277,7 @@ Resources:
 # ===== API gateway ============================================================
   
   RestApi :
+    DependsOn: ApiCognitoAuthorizer
     Type : AWS::ApiGateway::RestApi
     Properties:
       Parameters:
