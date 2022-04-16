@@ -1,6 +1,4 @@
-import json
 import os
-from time import pthread_getcpuclockid
 import boto3
 from datetime import datetime
 
@@ -55,6 +53,24 @@ WISHLIST_TABLE = os.environ.get('WishlistTable')
 PRODUCT_TABLE = os.environ.get('ProductTable')
 
 
+def parseItem(item):
+    created = item['created']['S']
+    image = item['image']['S']
+    link = item['link']['S']
+    name = item['name']['S']
+    price = item['price']['N']
+    retailer = item['retailer']['S']
+
+    return {
+        "created": created,
+        "image": image,
+        "link": link,
+        "name": name,
+        "price": price,
+        "retailer": retailer,
+    }
+
+
 def validate(params):
     print(params)
     uid = params["uid"]
@@ -86,6 +102,13 @@ def validate(params):
 
 
 def get_handler(uid):
+    EMPTY = {
+        'statusCode': 200,
+        'body': {
+            'items': []
+        }
+    }
+    # Find products in user's wishlist
     response = dynamodb.query(
         TableName=WISHLIST_TABLE,
         KeyConditionExpression='uid = :v1',
@@ -96,33 +119,43 @@ def get_handler(uid):
         }
     )
 
-    print(response)
-    if "Items" not in response or len(response["Items"]):
-        return {
-            'statusCode': 200,
-            'body': {
-                'items': []
+    if "Items" not in response or len(response["Items"]) == 0:
+        return EMPTY
+
+    # Get details of all products from product table
+    items = response["Items"]
+    keys = list(map(lambda item: {'id': {'S': item['pid']['S']}}, items))
+
+    response = dynamodb.batch_get_item(
+        RequestItems={
+            PRODUCT_TABLE: {
+                'Keys': keys
             }
         }
+    )
 
-    items = response["Items"]
+    response = response['Responses']
 
-    print(items)
+    if PRODUCT_TABLE not in response:
+        return EMPTY
+
+    items = response[PRODUCT_TABLE]
 
     return {
         'statusCode': 200,
         'body': {
             "uid": uid,
-            "items": ITEMS
+            "items": list(map(lambda item: parseItem(item), items))
         }
     }
 
 
 def post_handler(uid, product):
+    image = product["image"]
+    link = product["link"]
     name = product["name"]
     price = product["price"]
-    link = product["link"]
-    image = product["image"]
+    retailer = product["retailer"]
     id = link
 
     # Make sure product is in Product Table. If not, create it
@@ -153,6 +186,9 @@ def post_handler(uid, product):
                 },
                 'image': {
                     'S': image
+                },
+                'retailer': {
+                    'S': retailer
                 },
                 'created': {
                     'S': str(datetime.now())
@@ -203,7 +239,7 @@ def post_handler(uid, product):
 
 
 def delete_handler(uid, pid):
-    response = dynamodb.query(
+    dynamodb.delete_item(
         TableName=WISHLIST_TABLE,
         Key={
             'uid': {
@@ -215,7 +251,6 @@ def delete_handler(uid, pid):
         }
     )
 
-    print(response)
     return {
         'statusCode': 200,
         'body': {
