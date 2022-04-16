@@ -379,11 +379,13 @@ Resources:
                 RoleArn: !GetAtt DeployCloudFormationServiceRole.Arn
                 TemplatePath: ClientBuild::output-template.yaml
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
-                # ParameterOverrides: !Join
-                #   - ''
-                #   - - '{"RapidAPIKey": "'
-                #     - !Ref RapidAPIKey
-                #     - '"}'
+                ParameterOverrides: !Join
+                  - ''
+                  - - '{"RapidAPIKey": "'
+                    - !Ref RapidAPIKey
+                    - '","PredictEndPoint":"'
+                    - !Ref PredictEndPoint
+                    - '"}'    
               InputArtifacts:
                 - Name: ClientBuild
               OutputArtifacts:
