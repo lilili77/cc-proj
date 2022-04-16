@@ -12,15 +12,15 @@ Resources:
 
 # ===== Authentication ===========================================================
   
-  ApiCognitoAuthorizer:          
-    Type: AWS::ApiGateway::Authorizer
-    Properties:
-      IdentitySource: 'method.request.header.Authorization'
-      Name: ApiCognitoAuthorizer
-      ProviderARNs:
-        - !Sub 'arn:aws:cognito-idp:${AWS::Region}:${UserPoolIdentifier}'
-      RestApiId: !Ref RestApi
-      Type: COGNITO_USER_POOLS
+  # ApiCognitoAuthorizer:          
+  #   Type: AWS::ApiGateway::Authorizer
+  #   Properties:
+  #     IdentitySource: 'method.request.header.Authorization'
+  #     Name: ApiCognitoAuthorizer
+  #     ProviderARNs:
+  #       - !Sub 'arn:aws:cognito-idp:${AWS::Region}:${UserPoolIdentifier}'
+  #     RestApiId: !Ref RestApi
+  #     Type: COGNITO_USER_POOLS
 
 # ===== Image Bucket ===========================================================
   
@@ -278,8 +278,8 @@ Resources:
 
 # ===== API gateway ============================================================
   
-  RestApi :
-    Type : AWS::ApiGateway::RestApi
+  RestApi:
+    Type: AWS::ApiGateway::RestApi
     Properties:
       Parameters:
         endpointConfigurationTypes: REGIONAL
