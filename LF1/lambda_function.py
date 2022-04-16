@@ -54,7 +54,7 @@ RETAILERS = [
 ]
 
 VALID_SORTBY = ['price', 'relevance']
-
+ITEM_COUNT = 50
 
 def validate(params):
     q = params['q']
@@ -83,18 +83,33 @@ def ebay_call(query):
     Para: query:string
     Return: list of item
         Each item is dict with keys: id(start from idx 1), name, price, image, link
+        item example
+        {
+          "id": 248,
+          "name": "NVIDIA Tesla K80 GDDR5 24GB CUDA PCI-e GPU Accelerator Mining &amp; Deep Learning U",
+          "price": "$378.31",
+          "image": "https://ir.ebaystatic.com/cr/v/c1/s_1x2.gif",
+          "link": "https://www.ebay.com/itm/114815577976?hash=item1abb8aaf78:g:2nQAAOSwnd1gpMYc"
+        }
     Latency: 4,193ms
     Pricing: $5.00/mo; Unlimited
     """
     url = "https://ebay-product-search-scraper.p.rapidapi.com/index.php"
-    querystring = {"query":query}
+    querystring = {"query":query, "page":"1", "Item_Location":"us_only"}
     headers = {
     	"X-RapidAPI-Host": "ebay-product-search-scraper.p.rapidapi.com",
     	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
     }
     response = requests.request("GET", url, headers=headers, params=querystring)
     response = response.json()
-    return response['products'][1:]
+
+    # TODO: parse response shape
+    def parse_item(item):
+        # remove $ from price
+        item["price"] = item["price"][1:]
+        return item
+
+    return list(map(lambda i: parse_item(i), response['products'][1:1+ITEM_COUNT]))
 
 
 # IMPORTANT only 200 calls per mo is free!!!
