@@ -58,7 +58,7 @@ def validate(params):
     errors = {}
     parsedParams = {
         "uid": uid,
-        "method": method
+        "method": method,
     }
 
     if method not in VALID_METHODS:
@@ -67,6 +67,11 @@ def validate(params):
         errors["uid"] = "'uid' can't be empty"
 
     if method == "POST":
+        body = params["body"]
+        parsedParams["body"] = body
+        # TODO: body error validation
+
+    if method == "DELETE":
         pid = params["pid"]
         parsedParams["pid"] = pid
         if pid == "":
@@ -85,11 +90,13 @@ def get_handler(uid):
     }
 
 
-def post_handler(uid):
+def post_handler(uid, product):
     productTable = dynamodb.Table(PRODUCT_TABLE)
     # TODO: check if the product is already in the product table
-
     wishlistTable = dynamodb.Table(WISHLIST_TABLE)
+
+    print(product)
+    print(wishlistTable, productTable)
 
     return {
         'statusCode': 200,
@@ -111,7 +118,6 @@ def delete_handler(uid, pid):
 
 
 def lambda_handler(event, context):
-    print(wishlistTable, productTable)
     errors, parsedParams = validate(event)
     if len(errors.keys()) > 0:
         return {
@@ -125,7 +131,8 @@ def lambda_handler(event, context):
     if method == "GET":
         return get_handler(uid)
     if method == "POST":
-        return post_handler(uid)
+        product = parsedParams["body"]
+        return post_handler(uid, product)
     if method == "DELETE":
         pid = parsedParams["pid"]
         return delete_handler(uid, pid)
