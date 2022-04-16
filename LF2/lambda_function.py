@@ -106,8 +106,7 @@ def post_handler(uid, product):
     image = product["image"]
     id = link
 
-    # If item not found in Product Table, create it
-
+    # Make sure product is in Product Table. If not, create it
     response = dynamodb.get_item(
         TableName=PRODUCT_TABLE,
         Key={
@@ -116,7 +115,7 @@ def post_handler(uid, product):
             }
         }
     )
-    print(response)
+
     if "Item" not in response:
         dynamodb.put_item(
             TableName=PRODUCT_TABLE,
@@ -143,14 +142,24 @@ def post_handler(uid, product):
         )
         print('created')
 
-    # response = dynamodb.query(
-    #     TableName=WISHLIST_TABLE,
-    #     Key={
-    #         'uid': {
-    #             'S': uid
-    #         }
-    #     }
-    # )
+    response = dynamodb.query(
+        TableName=WISHLIST_TABLE,
+        KeyConditionExpression='uid = :v1 AND pid = :v2',
+        ExpressionAttributeValues={
+            ':v1': {
+                'S': uid
+            },
+            ':v2': {
+                'S': id
+            }
+        }
+    )
+
+    if "Item" in response:
+        return {
+            'statusCode': 400,
+            'error': "Product is already in user's wishlist."
+        }
 
     dynamodb.put_item(
         TableName=WISHLIST_TABLE,

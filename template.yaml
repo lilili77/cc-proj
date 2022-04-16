@@ -73,9 +73,13 @@ Resources:
       AttributeDefinitions:
         - AttributeName: uid
           AttributeType: S
+        - AttributeName: pid
+          AttributeType: S
       KeySchema:
         - AttributeName: uid
           KeyType: HASH
+        - AttributeName: pid
+          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 20
         WriteCapacityUnits: 20
