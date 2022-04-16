@@ -107,6 +107,7 @@ Resources:
             Action: "sts:AssumeRole"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AmazonSageMakerFullAccess
       Policies:
         - PolicyName: LF0BasicExecutionInlinePolicy
           PolicyDocument:
@@ -135,7 +136,7 @@ Resources:
       CodeUri: ./LF0
       Description: "Upload photo to s3 and call ML endpoint to return product names"
       MemorySize: 128
-      Timeout: 3
+      Timeout: 10
       Role: !GetAtt LF0Role.Arn
       Environment:
         Variables:
