@@ -17,9 +17,9 @@ def lambda_handler(event, context):
     
     # Sagemaker Img to embedding
     runtime= boto3.client('runtime.sagemaker')
-    payload = json.dumps('{"bucket": "'+ imgBucket +'", "key": "'+ img_key +'"}')
+    payload = json.dumps({"bucket": imgBucket, "key": img_key}) 
     response = runtime.invoke_endpoint(EndpointName= os.environ['PredictEndPoint'],
-                                       ContentType='text/csv',
+                                       ContentType='application/json',
                                        Body=payload)
     response = json.loads(response['Body'].read().decode())
     print(response)
