@@ -666,7 +666,7 @@ Resources:
                   application/json: | 
                     { 
                       "uid": "$input.params('uid')",
-                      "body": "$input.body",
+                      "item": "$input.json('$.item')",
                       "method": "$context.httpMethod"
                     }
                 passthroughBehavior: "when_no_match"
