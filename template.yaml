@@ -71,10 +71,10 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        - AttributeName: pid
+        - AttributeName: uid
           AttributeType: S
       KeySchema:
-        - AttributeName: pid
+        - AttributeName: uid
           KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 20

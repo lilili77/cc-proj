@@ -3,46 +3,26 @@ import requests
 import os
 
 ITEMS = [
-    {"id": "1", "name": "Kitty 1",
-        "image": "https://loremflickr.com/200/200", "price": "50.4", "starred": True},
-    {"id": "2", "name": "Kitty 2",
-        "image": "https://loremflickr.com/200/200", "price": "20.4", "starred": True},
-    {"id": "3", "name": "Kitty 3",
-        "image": "https://loremflickr.com/200/200", "price": "54.2", "starred": True},
-    {"id": "4", "name": "Kitty 4",
-        "image": "https://loremflickr.com/200/200", "price": "50.6", "starred": True},
-    {"id": "5", "name": "Kitty 5",
-        "image": "https://loremflickr.com/200/200", "price": "35.09", "starred": True},
-    {"id": "6", "name": "Kitty 1",
-        "image": "https://loremflickr.com/200/200", "price": "50.4", "starred": True},
-    {"id": "7", "name": "Kitty 2",
-        "image": "https://loremflickr.com/200/200", "price": "20.4", "starred": True},
-    {"id": "8", "name": "Kitty 3",
-        "image": "https://loremflickr.com/200/200", "price": "54.2", "starred": True},
-    {"id": "9", "name": "Kitty 4",
-        "image": "https://loremflickr.com/200/200", "price": "50.6", "starred": True},
-    {"id": "10", "name": "Kitty 5",
-        "image": "https://loremflickr.com/200/200", "price": "35.09", "starred": True},
-    {"id": "11", "name": "Kitty 1",
-        "image": "https://loremflickr.com/200/200", "price": "50.4", "starred": True},
-    {"id": "12", "name": "Kitty 2",
-        "image": "https://loremflickr.com/200/200", "price": "20.4", "starred": True},
-    {"id": "13", "name": "Kitty 3",
-        "image": "https://loremflickr.com/200/200", "price": "54.2", "starred": True},
-    {"id": "14", "name": "Kitty 4",
-        "image": "https://loremflickr.com/200/200", "price": "50.6", "starred": False},
-    {"id": "15", "name": "Kitty 5",
-        "image": "https://loremflickr.com/200/200", "price": "35.09", "starred": False},
-    {"id": "16", "name": "Kitty 1",
-        "image": "https://loremflickr.com/200/200", "price": "50.4", "starred": False},
-    {"id": "17", "name": "Kitty 2",
-        "image": "https://loremflickr.com/200/200", "price": "20.4", "starred": False},
-    {"id": "18", "name": "Kitty 3",
-        "image": "https://loremflickr.com/200/200", "price": "54.2", "starred": False},
-    {"id": "19", "name": "Kitty 4",
-        "image": "https://loremflickr.com/200/200", "price": "50.6", "starred": False},
-    {"id": "20", "name": "Kitty 5",
-        "image": "https://loremflickr.com/200/200", "price": "35.09", "starred": False},
+    {"id": "1", "name": "Kitty 1", "image": "https://loremflickr.com/200/200", "price": "50.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "2", "name": "Kitty 2", "image": "https://loremflickr.com/200/200", "price": "20.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "3", "name": "Kitty 3", "image": "https://loremflickr.com/200/200", "price": "54.2", "link": "https://amazon.com/", "starred": True},
+    {"id": "4", "name": "Kitty 4", "image": "https://loremflickr.com/200/200", "price": "50.6", "link": "https://amazon.com/", "starred": True},
+    {"id": "5", "name": "Kitty 5", "image": "https://loremflickr.com/200/200", "price": "35.09", "link": "https://amazon.com/", "starred": True},
+    {"id": "6", "name": "Kitty 1", "image": "https://loremflickr.com/200/200", "price": "50.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "7", "name": "Kitty 2", "image": "https://loremflickr.com/200/200", "price": "20.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "8", "name": "Kitty 3", "image": "https://loremflickr.com/200/200", "price": "54.2", "link": "https://amazon.com/", "starred": True},
+    {"id": "9", "name": "Kitty 4", "image": "https://loremflickr.com/200/200", "price": "50.6", "link": "https://amazon.com/", "starred": True},
+    {"id": "10", "name": "Kitty 5", "image": "https://loremflickr.com/200/200", "price": "35.09", "link": "https://amazon.com/", "starred": True},
+    {"id": "11", "name": "Kitty 1", "image": "https://loremflickr.com/200/200", "price": "50.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "12", "name": "Kitty 2", "image": "https://loremflickr.com/200/200", "price": "20.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "13", "name": "Kitty 3", "image": "https://loremflickr.com/200/200", "price": "54.2", "link": "https://amazon.com/", "starred": True},
+    {"id": "14", "name": "Kitty 4", "image": "https://loremflickr.com/200/200", "price": "50.6", "link": "https://amazon.com/", "starred": False},
+    {"id": "15", "name": "Kitty 5", "image": "https://loremflickr.com/200/200", "price": "35.09", "link": "https://amazon.com/", "starred": False},
+    {"id": "16", "name": "Kitty 1", "image": "https://loremflickr.com/200/200", "price": "50.4", "link": "https://amazon.com/", "starred": False},
+    {"id": "17", "name": "Kitty 2", "image": "https://loremflickr.com/200/200", "price": "20.4", "link": "https://amazon.com/", "starred": False},
+    {"id": "18", "name": "Kitty 3", "image": "https://loremflickr.com/200/200", "price": "54.2", "link": "https://amazon.com/", "starred": False},
+    {"id": "19", "name": "Kitty 4", "image": "https://loremflickr.com/200/200", "price": "50.6", "link": "https://amazon.com/", "starred": False},
+    {"id": "20", "name": "Kitty 5", "image": "https://loremflickr.com/200/200", "price": "35.09", "link": "https://amazon.com/", "starred": False},
 ]
 
 
@@ -95,12 +75,13 @@ def ebay_call(query):
     Pricing: $5.00/mo; Unlimited
     """
     url = "https://ebay-product-search-scraper.p.rapidapi.com/index.php"
-    querystring = {"query":query, "page":"1", "Item_Location":"us_only"}
+    querystring = {"query": query, "page": "1", "Item_Location": "us_only"}
     headers = {
-    	"X-RapidAPI-Host": "ebay-product-search-scraper.p.rapidapi.com",
-    	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
+        "X-RapidAPI-Host": "ebay-product-search-scraper.p.rapidapi.com",
+        "X-RapidAPI-Key": os.environ.get('RapidAPIKey')
     }
-    response = requests.request("GET", url, headers=headers, params=querystring)
+    response = requests.request(
+        "GET", url, headers=headers, params=querystring)
     response = response.json()
 
     # TODO: parse response shape
@@ -136,17 +117,18 @@ def amazon_call(query):
     """
     url = "https://amazon24.p.rapidapi.com/api/product"
     # Optional: "categoryID":"aps"
-    querystring = {"keyword":query,"country":"US","page":"1"}
+    querystring = {"keyword": query, "country": "US", "page": "1"}
     headers = {
-    	"X-RapidAPI-Host": "amazon24.p.rapidapi.com",
-    	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
+        "X-RapidAPI-Host": "amazon24.p.rapidapi.com",
+        "X-RapidAPI-Key": os.environ.get('RapidAPIKey')
     }
-    response = requests.request("GET", url, headers=headers, params=querystring)
+    response = requests.request(
+        "GET", url, headers=headers, params=querystring)
     print("Amazon return:", response.text)
     response = response.json()
     return response['docs']
-    
-    
+
+
 def lambda_handler(event, context):
     print(event)
     errors, parsedParams = validate(event)
@@ -158,14 +140,14 @@ def lambda_handler(event, context):
 
     q = parsedParams['q']
     sortBy = parsedParams['sort_by']
-    
+
     # External API call
     # Ebay: Unlimited calls
     ebay_items = ebay_call(q)
-    
+
     # Amazon: Only first 200 calls is free!!!
     # amazon_call("notebook")
-    
+
     # TODO: Shopee API, Parse API returns, Add to user search hist db
 
     # TODO: check if product is in the user's wishlist for logged in users
