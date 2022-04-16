@@ -93,7 +93,6 @@ def ebay_call(query):
     	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
     }
     response = requests.request("GET", url, headers=headers, params=querystring)
-    print("Ebay return:", response.text)
     response = response.json()
     return response['products'][1:]
 
@@ -147,7 +146,7 @@ def lambda_handler(event, context):
     
     # External API call
     # Ebay: Unlimited calls
-    ebay_call("gpu")
+    ebay_items = ebay_call(q)
     
     # Amazon: Only first 200 calls is free!!!
     # amazon_call("notebook")
@@ -163,7 +162,7 @@ def lambda_handler(event, context):
             "retailers": RETAILERS,
             "items": {
                 "Amazon": ITEMS,
-                "Ebay": ITEMS,
+                "Ebay": ebay_items,
                 "Alibaba": ITEMS,
                 "Shopee": ITEMS
             }
