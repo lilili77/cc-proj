@@ -86,6 +86,29 @@ def validate(params):
 
 
 def get_handler(uid):
+    response = dynamodb.query(
+        TableName=WISHLIST_TABLE,
+        KeyConditionExpression='uid = :v1',
+        ExpressionAttributeValues={
+            ':v1': {
+                'S': uid
+            }
+        }
+    )
+
+    print(response)
+    if "Items" not in response or len(response["Items"]):
+        return {
+            'statusCode': 200,
+            'body': {
+                'items': []
+            }
+        }
+
+    items = response["Items"]
+
+    print(items)
+
     return {
         'statusCode': 200,
         'body': {
@@ -96,10 +119,6 @@ def get_handler(uid):
 
 
 def post_handler(uid, product):
-    # productTable = dynamodb.Table(PRODUCT_TABLE)
-    # TODO: check if the product is already in the product table
-    # wishlistTable = dynamodb.Table(WISHLIST_TABLE)
-
     name = product["name"]
     price = product["price"]
     link = product["link"]
@@ -140,7 +159,6 @@ def post_handler(uid, product):
                 }
             }
         )
-        print('created')
 
     response = dynamodb.query(
         TableName=WISHLIST_TABLE,
@@ -177,29 +195,30 @@ def post_handler(uid, product):
     )
 
     return {
-        'headers': {
-            'Access-Control-Allow-Headers': 'Content-Type',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PUT'
-        },
         'statusCode': 200,
         'body': {
-            "uid": uid,
             "item": product
         }
     }
 
 
 def delete_handler(uid, pid):
+    response = dynamodb.query(
+        TableName=WISHLIST_TABLE,
+        Key={
+            'uid': {
+                'S': uid
+            },
+            'pid': {
+                'S': pid
+            }
+        }
+    )
+
+    print(response)
     return {
-        'headers': {
-            'Access-Control-Allow-Headers': 'Content-Type',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PUT'
-        },
         'statusCode': 200,
         'body': {
-            "uid": uid,
             "item": {}
         }
     }
