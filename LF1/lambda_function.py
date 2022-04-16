@@ -3,26 +3,46 @@ import requests
 import os
 
 ITEMS = [
-    {"id": "1", "name": "Kitty 1", "image": "https://loremflickr.com/200/200", "price": "50.4", "link": "https://amazon.com/", "starred": True},
-    {"id": "2", "name": "Kitty 2", "image": "https://loremflickr.com/200/200", "price": "20.4", "link": "https://amazon.com/", "starred": True},
-    {"id": "3", "name": "Kitty 3", "image": "https://loremflickr.com/200/200", "price": "54.2", "link": "https://amazon.com/", "starred": True},
-    {"id": "4", "name": "Kitty 4", "image": "https://loremflickr.com/200/200", "price": "50.6", "link": "https://amazon.com/", "starred": True},
-    {"id": "5", "name": "Kitty 5", "image": "https://loremflickr.com/200/200", "price": "35.09", "link": "https://amazon.com/", "starred": True},
-    {"id": "6", "name": "Kitty 1", "image": "https://loremflickr.com/200/200", "price": "50.4", "link": "https://amazon.com/", "starred": True},
-    {"id": "7", "name": "Kitty 2", "image": "https://loremflickr.com/200/200", "price": "20.4", "link": "https://amazon.com/", "starred": True},
-    {"id": "8", "name": "Kitty 3", "image": "https://loremflickr.com/200/200", "price": "54.2", "link": "https://amazon.com/", "starred": True},
-    {"id": "9", "name": "Kitty 4", "image": "https://loremflickr.com/200/200", "price": "50.6", "link": "https://amazon.com/", "starred": True},
-    {"id": "10", "name": "Kitty 5", "image": "https://loremflickr.com/200/200", "price": "35.09", "link": "https://amazon.com/", "starred": True},
-    {"id": "11", "name": "Kitty 1", "image": "https://loremflickr.com/200/200", "price": "50.4", "link": "https://amazon.com/", "starred": True},
-    {"id": "12", "name": "Kitty 2", "image": "https://loremflickr.com/200/200", "price": "20.4", "link": "https://amazon.com/", "starred": True},
-    {"id": "13", "name": "Kitty 3", "image": "https://loremflickr.com/200/200", "price": "54.2", "link": "https://amazon.com/", "starred": True},
-    {"id": "14", "name": "Kitty 4", "image": "https://loremflickr.com/200/200", "price": "50.6", "link": "https://amazon.com/", "starred": False},
-    {"id": "15", "name": "Kitty 5", "image": "https://loremflickr.com/200/200", "price": "35.09", "link": "https://amazon.com/", "starred": False},
-    {"id": "16", "name": "Kitty 1", "image": "https://loremflickr.com/200/200", "price": "50.4", "link": "https://amazon.com/", "starred": False},
-    {"id": "17", "name": "Kitty 2", "image": "https://loremflickr.com/200/200", "price": "20.4", "link": "https://amazon.com/", "starred": False},
-    {"id": "18", "name": "Kitty 3", "image": "https://loremflickr.com/200/200", "price": "54.2", "link": "https://amazon.com/", "starred": False},
-    {"id": "19", "name": "Kitty 4", "image": "https://loremflickr.com/200/200", "price": "50.6", "link": "https://amazon.com/", "starred": False},
-    {"id": "20", "name": "Kitty 5", "image": "https://loremflickr.com/200/200", "price": "35.09", "link": "https://amazon.com/", "starred": False},
+    {"id": "1", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
+        "price": "50.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "2", "name": "Kitty 2", "image": "https://loremflickr.com/200/200",
+        "price": "20.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "3", "name": "Kitty 3", "image": "https://loremflickr.com/200/200",
+        "price": "54.2", "link": "https://amazon.com/", "starred": True},
+    {"id": "4", "name": "Kitty 4", "image": "https://loremflickr.com/200/200",
+        "price": "50.6", "link": "https://amazon.com/", "starred": True},
+    {"id": "5", "name": "Kitty 5", "image": "https://loremflickr.com/200/200",
+        "price": "35.09", "link": "https://amazon.com/", "starred": True},
+    {"id": "6", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
+        "price": "50.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "7", "name": "Kitty 2", "image": "https://loremflickr.com/200/200",
+        "price": "20.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "8", "name": "Kitty 3", "image": "https://loremflickr.com/200/200",
+        "price": "54.2", "link": "https://amazon.com/", "starred": True},
+    {"id": "9", "name": "Kitty 4", "image": "https://loremflickr.com/200/200",
+        "price": "50.6", "link": "https://amazon.com/", "starred": True},
+    {"id": "10", "name": "Kitty 5", "image": "https://loremflickr.com/200/200",
+        "price": "35.09", "link": "https://amazon.com/", "starred": True},
+    {"id": "11", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
+        "price": "50.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "12", "name": "Kitty 2", "image": "https://loremflickr.com/200/200",
+        "price": "20.4", "link": "https://amazon.com/", "starred": True},
+    {"id": "13", "name": "Kitty 3", "image": "https://loremflickr.com/200/200",
+        "price": "54.2", "link": "https://amazon.com/", "starred": True},
+    {"id": "14", "name": "Kitty 4", "image": "https://loremflickr.com/200/200",
+        "price": "50.6", "link": "https://amazon.com/", "starred": False},
+    {"id": "15", "name": "Kitty 5", "image": "https://loremflickr.com/200/200",
+        "price": "35.09", "link": "https://amazon.com/", "starred": False},
+    {"id": "16", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
+        "price": "50.4", "link": "https://amazon.com/", "starred": False},
+    {"id": "17", "name": "Kitty 2", "image": "https://loremflickr.com/200/200",
+        "price": "20.4", "link": "https://amazon.com/", "starred": False},
+    {"id": "18", "name": "Kitty 3", "image": "https://loremflickr.com/200/200",
+        "price": "54.2", "link": "https://amazon.com/", "starred": False},
+    {"id": "19", "name": "Kitty 4", "image": "https://loremflickr.com/200/200",
+        "price": "50.6", "link": "https://amazon.com/", "starred": False},
+    {"id": "20", "name": "Kitty 5", "image": "https://loremflickr.com/200/200",
+        "price": "35.09", "link": "https://amazon.com/", "starred": False},
 ]
 
 
@@ -35,6 +55,7 @@ RETAILERS = [
 
 VALID_SORTBY = ['price', 'relevance']
 ITEM_COUNT = 50
+
 
 def validate(params):
     q = params['q']
@@ -87,7 +108,13 @@ def ebay_call(query):
     # TODO: parse response shape
     def parse_item(item):
         # remove $ from price
-        item["price"] = item["price"][1:]
+        price = item["price"]
+        if "to" in price:
+            item["price"] = price.split("to")[0][1:].strip()
+        else:
+            item["price"] = price[1:]
+
+        item["retailer"] = "Ebay"
         return item
 
     return list(map(lambda i: parse_item(i), response['products'][1:1+ITEM_COUNT]))
