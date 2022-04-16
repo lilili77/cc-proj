@@ -1,7 +1,5 @@
 import json
 import os
-from time import pthread_getcpuclockid
-
 
 ITEMS = [
     {"id": "1", "name": "Kitty 1",
@@ -125,7 +123,7 @@ def lambda_handler(event, context):
         return post_handler(uid)
     if method == "DELETE":
         pid = parsedParams["pid"]
-        return delete_handler(uid)
+        return delete_handler(uid, pid)
 
     return {
         'statusCode': 200,
