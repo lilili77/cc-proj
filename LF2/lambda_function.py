@@ -100,7 +100,9 @@ def post_handler(uid, product):
 
     return {
         'headers': {
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PUT'
         },
         'statusCode': 200,
         'body': {
@@ -113,7 +115,9 @@ def post_handler(uid, product):
 def delete_handler(uid, pid):
     return {
         'headers': {
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PUT'
         },
         'statusCode': 200,
         'body': {
