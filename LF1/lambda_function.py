@@ -4,45 +4,45 @@ import os
 
 ITEMS = [
     {"id": "1", "name": "Kitty 1",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "50.4", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "50.4", "starred": True},
     {"id": "2", "name": "Kitty 2",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "20.4", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "20.4", "starred": True},
     {"id": "3", "name": "Kitty 3",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "54.2", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "54.2", "starred": True},
     {"id": "4", "name": "Kitty 4",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "50.6", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "50.6", "starred": True},
     {"id": "5", "name": "Kitty 5",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "35.09", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "35.09", "starred": True},
     {"id": "6", "name": "Kitty 1",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "50.4", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "50.4", "starred": True},
     {"id": "7", "name": "Kitty 2",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "20.4", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "20.4", "starred": True},
     {"id": "8", "name": "Kitty 3",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "54.2", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "54.2", "starred": True},
     {"id": "9", "name": "Kitty 4",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "50.6", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "50.6", "starred": True},
     {"id": "10", "name": "Kitty 5",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "35.09", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "35.09", "starred": True},
     {"id": "11", "name": "Kitty 1",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "50.4", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "50.4", "starred": True},
     {"id": "12", "name": "Kitty 2",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "20.4", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "20.4", "starred": True},
     {"id": "13", "name": "Kitty 3",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "54.2", "starred": True},
+        "image": "https://loremflickr.com/200/200", "price": "54.2", "starred": True},
     {"id": "14", "name": "Kitty 4",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "50.6", "starred": False},
+        "image": "https://loremflickr.com/200/200", "price": "50.6", "starred": False},
     {"id": "15", "name": "Kitty 5",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "35.09", "starred": False},
+        "image": "https://loremflickr.com/200/200", "price": "35.09", "starred": False},
     {"id": "16", "name": "Kitty 1",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "50.4", "starred": False},
+        "image": "https://loremflickr.com/200/200", "price": "50.4", "starred": False},
     {"id": "17", "name": "Kitty 2",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "20.4", "starred": False},
+        "image": "https://loremflickr.com/200/200", "price": "20.4", "starred": False},
     {"id": "18", "name": "Kitty 3",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "54.2", "starred": False},
+        "image": "https://loremflickr.com/200/200", "price": "54.2", "starred": False},
     {"id": "19", "name": "Kitty 4",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "50.6", "starred": False},
+        "image": "https://loremflickr.com/200/200", "price": "50.6", "starred": False},
     {"id": "20", "name": "Kitty 5",
-        "imageUrl": "https://loremflickr.com/200/200", "price": "35.09", "starred": False},
+        "image": "https://loremflickr.com/200/200", "price": "35.09", "starred": False},
 ]
 
 
@@ -54,7 +54,7 @@ RETAILERS = [
 ]
 
 VALID_SORTBY = ['price', 'relevance']
-
+ITEM_COUNT = 50
 
 def validate(params):
     q = params['q']
@@ -83,19 +83,33 @@ def ebay_call(query):
     Para: query:string
     Return: list of item
         Each item is dict with keys: id(start from idx 1), name, price, image, link
+        item example
+        {
+          "id": 248,
+          "name": "NVIDIA Tesla K80 GDDR5 24GB CUDA PCI-e GPU Accelerator Mining &amp; Deep Learning U",
+          "price": "$378.31",
+          "image": "https://ir.ebaystatic.com/cr/v/c1/s_1x2.gif",
+          "link": "https://www.ebay.com/itm/114815577976?hash=item1abb8aaf78:g:2nQAAOSwnd1gpMYc"
+        }
     Latency: 4,193ms
     Pricing: $5.00/mo; Unlimited
     """
     url = "https://ebay-product-search-scraper.p.rapidapi.com/index.php"
-    querystring = {"query":query}
+    querystring = {"query":query, "page":"1", "Item_Location":"us_only"}
     headers = {
     	"X-RapidAPI-Host": "ebay-product-search-scraper.p.rapidapi.com",
     	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
     }
     response = requests.request("GET", url, headers=headers, params=querystring)
-    print("Ebay return:", response.text)
     response = response.json()
-    return response['products'][1:]
+
+    # TODO: parse response shape
+    def parse_item(item):
+        # remove $ from price
+        item["price"] = item["price"][1:]
+        return item
+
+    return list(map(lambda i: parse_item(i), response['products'][1:1+ITEM_COUNT]))
 
 
 # IMPORTANT only 200 calls per mo is free!!!
@@ -147,12 +161,14 @@ def lambda_handler(event, context):
     
     # External API call
     # Ebay: Unlimited calls
-    ebay_call("gpu")
+    ebay_items = ebay_call(q)
     
     # Amazon: Only first 200 calls is free!!!
     # amazon_call("notebook")
     
     # TODO: Shopee API, Parse API returns, Add to user search hist db
+
+    # TODO: check if product is in the user's wishlist for logged in users
 
     return {
         'statusCode': 200,
@@ -163,7 +179,7 @@ def lambda_handler(event, context):
             "retailers": RETAILERS,
             "items": {
                 "Amazon": ITEMS,
-                "Ebay": ITEMS,
+                "Ebay": ebay_items,
                 "Alibaba": ITEMS,
                 "Shopee": ITEMS
             }
