@@ -99,6 +99,9 @@ def post_handler(uid, product):
     print(wishlistTable, productTable)
 
     return {
+        'headers': {
+            'Access-Control-Allow-Origin': '*'
+        },
         'statusCode': 200,
         'body': {
             "uid": uid,
@@ -109,6 +112,9 @@ def post_handler(uid, product):
 
 def delete_handler(uid, pid):
     return {
+        'headers': {
+            'Access-Control-Allow-Origin': '*'
+        },
         'statusCode': 200,
         'body': {
             "uid": uid,
