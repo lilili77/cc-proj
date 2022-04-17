@@ -121,6 +121,11 @@ def ebay_call(query, wishlist_items):
         "GET", url, headers=headers, params=querystring)
     response = response.json()
 
+    # If nothing available
+    # NOTE: the first item in the products list is not valid
+    if "products" not in response or len(response['products']) == 1:
+        return []
+
     def parse_item(item):
         # remove $ from price
         price = item["price"]
