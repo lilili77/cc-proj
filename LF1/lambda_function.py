@@ -48,12 +48,6 @@ ITEMS = [
 dynamodb = boto3.client('dynamodb')
 WISHLIST_TABLE = os.environ.get('WishlistTable')
 
-RETAILERS = [
-    {"name": "Amazon", "url": "https://amazon.com"},
-    {"name": "Ebay", "url": "https://ebay.com"},
-    {"name": "Alibaba", "url": "https://alibaba.com"},
-    {"name": "Shopee", "url": "https://shopee.com"},
-]
 
 VALID_SORTBY = ['price', 'relevance']
 ITEM_COUNT = 50
@@ -92,10 +86,7 @@ def validate(params):
             parsedParams["sort_by"] = sort_by
 
     if "uid" in params:
-        uid = params['uid']
-        if uid == "":
-            errors["uid"] = "'uid' is invalid"
-        parsedParams["uid"] = uid
+        parsedParams["uid"] = params['uid']
     else:
         parsedParams["uid"] = ""
 
@@ -234,7 +225,6 @@ def lambda_handler(event, context):
             "q": q,
             "sort_by": sortBy,
             "count": len(ITEMS),
-            "retailers": RETAILERS,
             "items": {
                 "Amazon": ITEMS,
                 "Ebay": ebay_items,
