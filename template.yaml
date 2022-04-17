@@ -280,6 +280,107 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/wishlist/*
 
+# ===== LF3 ====================================================================
+
+  LF3Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      Policies:
+        - PolicyName: LF3BasicExecutionInlinePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource:
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/complaza-LF3:*
+
+  LF3LogGroup:
+        Type: AWS::Logs::LogGroup
+        Properties:
+            LogGroupName: '/aws/lambda/complaza-LF3'
+            RetentionInDays: 30
+
+  LF3:
+    Type: 'AWS::Serverless::Function'
+    DependsOn: LF3LogGroup
+    Properties:
+      FunctionName: 'complaza-LF3'
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./LF3
+      Description: "Return search history"
+      MemorySize: 128
+      Timeout: 20
+      Role: !GetAtt LF3Role.Arn
+      Environment:
+        Variables:
+          SearchHistoryTable: !Ref SearchHistoryTable
+      Layers:
+        - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
+
+# ===== LF4 ====================================================================
+
+  LF4Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      Policies:
+        - PolicyName: LF4BasicExecutionInlinePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource:
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/complaza-LF4:*
+
+  LF4LogGroup:
+        Type: AWS::Logs::LogGroup
+        Properties:
+            LogGroupName: '/aws/lambda/complaza-LF4'
+            RetentionInDays: 30
+
+  LF4:
+    Type: 'AWS::Serverless::Function'
+    DependsOn: LF4LogGroup
+    Properties:
+      FunctionName: 'complaza-LF4'
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./LF4
+      Description: "Get price and update price history"
+      MemorySize: 128
+      Timeout: 20
+      Role: !GetAtt LF4Role.Arn
+      Environment:
+        Variables:
+          ProductTable: !Ref ProductTable
+          PriceHistoryTable: !Ref PriceHistoryTable
+      Layers:
+        - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
+
 # ===== API gateway ============================================================
   
   RestApi:
