@@ -10,6 +10,8 @@ phases:
       - pip install -r ./LF0/requirements.txt -t ./LF0
       - pip install -r ./LF1/requirements.txt -t ./LF1
       - pip install -r ./LF2/requirements.txt -t ./LF2
+      - pip install -r ./LF2/requirements.txt -t ./LF3
+      - pip install -r ./LF2/requirements.txt -t ./LF4
   build:
     commands:
     - aws cloudformation package --template-file template.yaml --s3-bucket $bucket_name --output-template-file output-template.yaml
