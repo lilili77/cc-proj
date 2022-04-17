@@ -73,11 +73,13 @@ def get_id_from_link(link):
 
 
 def validate(params):
+    print(params)
     q = params['q']
     sort_by = params['sort_by']
     parsedParams = {
         "q": q,
         "sort_by": "price"
+
     }
     errors = {}
 
@@ -93,7 +95,7 @@ def validate(params):
         uid = params['uid']
         if uid == "":
             errors["uid"] = "'uid' is invalid"
-        parsedParams["uid"] = params['uid']
+        parsedParams["uid"] = uid
     else:
         parsedParams["uid"] = ""
 
@@ -139,6 +141,8 @@ def ebay_call(query, wishlist_items):
         item["retailer"] = "Ebay"
         id = get_id_from_link(item["link"])
         item["id"] = id
+        if id in wishlist_items:
+            print("found a starred item")
         item["starred"] = id in wishlist_items
         return item
 
@@ -206,9 +210,9 @@ def lambda_handler(event, context):
             }
         )
 
-        if "Items" in response and len(response["Items"]) == 0:
+        if "Items" in response and len(response["Items"]) > 0:
             wishlist_items = set(
-                map(lambda item: {'id': {'S': item['pid']['S']}}, response["Items"]))
+                map(lambda item: item['pid']['S'], response["Items"]))
 
     # External API call
     # Ebay: Unlimited calls
@@ -224,6 +228,7 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         'body': {
+            "wishlist_items": list(wishlist_items),
             "q": q,
             "sort_by": sortBy,
             "count": len(ITEMS),
