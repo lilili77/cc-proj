@@ -112,6 +112,7 @@ def ebay_call(query, wishlist_items):
     Pricing: $5.00/mo; Unlimited
     """
     url = "https://ebay-product-search-scraper.p.rapidapi.com/index.php"
+    query = query.replace(" ", "%20")
     querystring = {"query": query, "page": "1", "Item_Location": "us_only"}
     headers = {
         "X-RapidAPI-Host": "ebay-product-search-scraper.p.rapidapi.com",
