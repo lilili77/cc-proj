@@ -2,50 +2,6 @@ import os
 import boto3
 from datetime import datetime
 
-ITEMS = [
-    {"id": "1", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
-        "price": "50.4", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "2", "name": "Kitty 2", "image": "https://loremflickr.com/200/200",
-        "price": "20.4", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "3", "name": "Kitty 3", "image": "https://loremflickr.com/200/200",
-        "price": "54.2", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "4", "name": "Kitty 4", "image": "https://loremflickr.com/200/200",
-        "price": "50.6", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "5", "name": "Kitty 5", "image": "https://loremflickr.com/200/200",
-        "price": "35.09", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "6", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
-        "price": "50.4", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "7", "name": "Kitty 2", "image": "https://loremflickr.com/200/200",
-        "price": "20.4", "link": "https://amazon.com/", "created": '2022-03-11'},
-    {"id": "8", "name": "Kitty 3", "image": "https://loremflickr.com/200/200",
-        "price": "54.2", "link": "https://amazon.com/", "created": '2022-03-12'},
-    {"id": "9", "name": "Kitty 4", "image": "https://loremflickr.com/200/200",
-        "price": "50.6", "link": "https://amazon.com/", "created": '2022-03-13'},
-    {"id": "10", "name": "Kitty 5", "image": "https://loremflickr.com/200/200",
-        "price": "35.09", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "11", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
-        "price": "50.4", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "12", "name": "Kitty 2", "image": "https://loremflickr.com/200/200",
-        "price": "20.4", "link": "https://amazon.com/", "created": '2022-03-14'},
-    {"id": "13", "name": "Kitty 3", "image": "https://loremflickr.com/200/200",
-        "price": "54.2", "link": "https://amazon.com/", "created": '2022-03-15'},
-    {"id": "14", "name": "Kitty 4", "image": "https://loremflickr.com/200/200",
-        "price": "50.6", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "15", "name": "Kitty 5", "image": "https://loremflickr.com/200/200",
-        "price": "35.09", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "16", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
-        "price": "50.4", "link": "https://amazon.com/", "created": '2022-03-13'},
-    {"id": "17", "name": "Kitty 2", "image": "https://loremflickr.com/200/200",
-        "price": "20.4", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "18", "name": "Kitty 3", "image": "https://loremflickr.com/200/200",
-        "price": "54.2", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "19", "name": "Kitty 4", "image": "https://loremflickr.com/200/200",
-        "price": "50.6", "link": "https://amazon.com/", "created": '2022-03-10'},
-    {"id": "20", "name": "Kitty 5", "image": "https://loremflickr.com/200/200",
-        "price": "35.09", "link": "https://amazon.com/", "created": '2022-03-10'},
-]
-
-
 VALID_METHODS = ["GET", "POST", "DELETE"]
 dynamodb = boto3.client('dynamodb')
 
@@ -60,7 +16,7 @@ LINK_TO_ID = {
 
 
 def get_id_from_link(link):
-    for key, value in LINK_TO_ID.entries():
+    for key, value in LINK_TO_ID.items():
         link = link.replace(key, value)
     return link
 
