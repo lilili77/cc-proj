@@ -11,7 +11,7 @@ PRODUCT_TABLE = os.environ.get('ProductTable')
 LINK_TO_ID = {
     "https://": "",
     "/": "-",
-    "?": "#"
+    "?": "@"
 }
 
 
@@ -209,6 +209,7 @@ def post_handler(uid, product):
 
 
 def delete_handler(uid, pid):
+    print(uid, pid)
     dynamodb.delete_item(
         TableName=WISHLIST_TABLE,
         Key={
@@ -224,6 +225,8 @@ def delete_handler(uid, pid):
     return {
         'statusCode': 200,
         'body': {
+            "uid": uid,
+            "pid": pid,
             "item": {}
         }
     }
