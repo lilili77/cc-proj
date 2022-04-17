@@ -63,7 +63,7 @@ def lambda_handler(event, context):
 
     response = search.search(
         body=query,
-        index='embedding"
+        index='embedding'
     )
     results = response['hits']['hits']
     print(results)
