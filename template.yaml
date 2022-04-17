@@ -471,8 +471,8 @@ Resources:
                   application/json: | 
                     { 
                       "q": "$input.params('q')",
-                      "sort_by": "$input.params('sort_by')",
-                      "uid": "$input.params('uid')"
+                      "uid": "$input.params('uid')",
+                      "sort_by": "$input.params('sort_by')"
                     }
                 passthroughBehavior: "when_no_match"
                 contentHandling: "CONVERT_TO_TEXT"
