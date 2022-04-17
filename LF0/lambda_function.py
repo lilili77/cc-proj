@@ -7,7 +7,7 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
 
 def init_search():
-    host = 'search-product-embedding-5loh22eno5aldjgq43oxuhvqqi.us-east-1.es.amazonaws.com'
+    host = os.environ['OpensearchEndPoint']
     region = 'us-east-1'
     service = 'es'
     credentials = boto3.Session().get_credentials()
@@ -66,7 +66,7 @@ def lambda_handler(event, context):
     for result in results:
         print(result['_source']['title'])
     
-    # TODO: call LF1 to search title
+    # TODO: Get keywords from list of titles, call LF1 to search title
     
 
     return {

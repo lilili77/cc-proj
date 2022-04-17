@@ -8,6 +8,8 @@ Parameters:
     Type: String
   PredictEndPoint:
     Type: String
+  OpensearchEndPoint:
+    Type: String
 
 Resources:
   AssetsBucket:
@@ -385,7 +387,9 @@ Resources:
                     - !Ref RapidAPIKey
                     - '","PredictEndPoint":"'
                     - !Ref PredictEndPoint
-                    - '"}'    
+                    - '","OpensearchEndPoint":"'
+                    - !Ref OpensearchEndPoint
+                    - '"}'               
               InputArtifacts:
                 - Name: ClientBuild
               OutputArtifacts:
@@ -408,6 +412,8 @@ Resources:
                     - !Ref RapidAPIKey
                     - '","PredictEndPoint":"'
                     - !Ref PredictEndPoint
+                    - '","OpensearchEndPoint":"'
+                    - !Ref OpensearchEndPoint
                     - '"}'             
               OutputArtifacts: []
               InputArtifacts:

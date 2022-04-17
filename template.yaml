@@ -9,6 +9,8 @@ Parameters:
     Type: String
   PredictEndPoint:
     Type: String
+  OpensearchEndPoint:
+    Type: String
 
 Resources:
 
@@ -147,6 +149,7 @@ Resources:
         Variables:
           ImgBucket: !Ref ImgBucket
           PredictEndPoint: !Ref PredictEndPoint
+          OpensearchEndPoint: !Ref OpensearchEndPoint
       Layers:
         - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
         - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-numpy:25
