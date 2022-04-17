@@ -52,16 +52,30 @@ dynamodb = boto3.client('dynamodb')
 WISHLIST_TABLE = os.environ.get('WishlistTable')
 PRODUCT_TABLE = os.environ.get('ProductTable')
 
+LINK_TO_ID = {
+    "https://": "",
+    "/": "-",
+    "?": "#"
+}
 
-def parseItem(item):
+
+def get_id_from_link(link):
+    for key, value in LINK_TO_ID.entries():
+        link = link.replace(key, value)
+    return link
+
+
+def parse_item(item):
     created = item['created']['S']
     image = item['image']['S']
     link = item['link']['S']
     name = item['name']['S']
     price = item['price']['N']
     retailer = item['retailer']['S']
+    id = item['id']['S']
 
     return {
+        "id": id,
         "created": created,
         "image": image,
         "link": link,
@@ -145,7 +159,7 @@ def get_handler(uid):
         'statusCode': 200,
         'body': {
             "uid": uid,
-            "items": list(map(lambda item: parseItem(item), items))
+            "items": list(map(lambda item: parse_item(item), items))
         }
     }
 
@@ -156,7 +170,7 @@ def post_handler(uid, product):
     name = product["name"]
     price = product["price"]
     retailer = product["retailer"]
-    id = link
+    id = get_id_from_link(link)
 
     # Make sure product is in Product Table. If not, create it
     response = dynamodb.get_item(
