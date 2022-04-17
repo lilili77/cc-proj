@@ -138,7 +138,9 @@ def ebay_call(query, wishlist_items):
         else:
             item["price"] = price[1:]
 
+        item["link"] = item["link"].split('?')[0]
         item["retailer"] = "Ebay"
+
         id = get_id_from_link(item["link"])
         item["id"] = id
         if id in wishlist_items:
