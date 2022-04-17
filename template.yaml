@@ -441,6 +441,10 @@ Resources:
                   in: "query"
                   required: true
                   type: "string"
+                - name: "uid"
+                  in: "query"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"
@@ -462,11 +466,13 @@ Resources:
                 requestParameters:
                   integration.request.querystring.q: "method.request.querystring.q"
                   integration.request.querystring.sort_by: "method.request.querystring.sort_by"
+                  integration.request.querystring.uid: "method.request.querystring.uid"
                 requestTemplates:
                   application/json: | 
                     { 
                       "q": "$input.params('q')",
-                      "sort_by": "$input.params('sort_by')"
+                      "sort_by": "$input.params('sort_by')",
+                      "uid": "$input.params('uid')"
                     }
                 passthroughBehavior: "when_no_match"
                 contentHandling: "CONVERT_TO_TEXT"
