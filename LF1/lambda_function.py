@@ -79,8 +79,8 @@ def validate(params):
     parsedParams = {
         "q": q,
         "sort_by": "price"
-
     }
+
     errors = {}
 
     if q == "":

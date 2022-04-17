@@ -443,7 +443,7 @@ Resources:
                   type: "string"
                 - name: "uid"
                   in: "query"
-                  required: false
+                  required: true
                   type: "string"
               responses:
                 "200":
