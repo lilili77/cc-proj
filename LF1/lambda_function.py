@@ -122,8 +122,7 @@ def ebay_call(query, wishlist_items):
     response = response.json()
 
     # If nothing available
-    # NOTE: the first item in the products list is not valid
-    if "products" not in response or len(response['products']) == 1:
+    if response is None:
         return []
 
     def parse_item(item):
@@ -144,6 +143,7 @@ def ebay_call(query, wishlist_items):
         item["starred"] = id in wishlist_items
         return item
 
+    # NOTE: the first item in the products list is not valid
     return list(map(lambda i: parse_item(i), response['products'][1:1+ITEM_COUNT]))
 
 
