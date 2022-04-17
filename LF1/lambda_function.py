@@ -1,6 +1,6 @@
-import json
 import requests
 import os
+import boto3
 
 ITEMS = [
     {"id": "1", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
@@ -45,6 +45,8 @@ ITEMS = [
         "price": "35.09", "link": "https://amazon.com/", "starred": False},
 ]
 
+dynamodb = boto3.client('dynamodb')
+WISHLIST_TABLE = os.environ.get('WishlistTable')
 
 RETAILERS = [
     {"name": "Amazon", "url": "https://amazon.com"},
@@ -55,6 +57,19 @@ RETAILERS = [
 
 VALID_SORTBY = ['price', 'relevance']
 ITEM_COUNT = 50
+
+
+def get_id_from_link(link):
+    # NOTE: make sure this method stays the same in LF1
+    LINK_TO_ID = {
+        "https://": "",
+        "/": "-",
+        "?": "@"
+    }
+
+    for key, value in LINK_TO_ID.items():
+        link = link.replace(key, value)
+    return link
 
 
 def validate(params):
@@ -74,11 +89,19 @@ def validate(params):
         else:
             parsedParams["sort_by"] = sort_by
 
+    if "uid" in params:
+        uid = params['uid']
+        if uid == "":
+            errors["uid"] = "'uid' is invalid"
+        parsedParams["uid"] = params['uid']
+    else:
+        parsedParams["uid"] = ""
+
     return errors, parsedParams
 
 
 # Unlimited calls per mo
-def ebay_call(query):
+def ebay_call(query, wishlist_items):
     """
     Ebay external API call
     Para: query:string
@@ -105,7 +128,6 @@ def ebay_call(query):
         "GET", url, headers=headers, params=querystring)
     response = response.json()
 
-    # TODO: parse response shape
     def parse_item(item):
         # remove $ from price
         price = item["price"]
@@ -115,6 +137,9 @@ def ebay_call(query):
             item["price"] = price[1:]
 
         item["retailer"] = "Ebay"
+        id = get_id_from_link(item["link"])
+        item["id"] = id
+        item["starred"] = id in wishlist_items
         return item
 
     return list(map(lambda i: parse_item(i), response['products'][1:1+ITEM_COUNT]))
@@ -157,7 +182,6 @@ def amazon_call(query):
 
 
 def lambda_handler(event, context):
-    print(event)
     errors, parsedParams = validate(event)
     if len(errors.keys()) > 0:
         return {
@@ -167,10 +191,28 @@ def lambda_handler(event, context):
 
     q = parsedParams['q']
     sortBy = parsedParams['sort_by']
+    uid = parsedParams['uid']
+
+    # gather user's wishlisted items
+    wishlist_items = set()
+    if uid != "":
+        response = dynamodb.query(
+            TableName=WISHLIST_TABLE,
+            KeyConditionExpression='uid = :v1',
+            ExpressionAttributeValues={
+                ':v1': {
+                    'S': uid
+                }
+            }
+        )
+
+        if "Items" in response and len(response["Items"]) == 0:
+            wishlist_items = set(
+                map(lambda item: {'id': {'S': item['pid']['S']}}, response["Items"]))
 
     # External API call
     # Ebay: Unlimited calls
-    ebay_items = ebay_call(q)
+    ebay_items = ebay_call(q, wishlist_items)
 
     # Amazon: Only first 200 calls is free!!!
     # amazon_call("notebook")

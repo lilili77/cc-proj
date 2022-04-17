@@ -205,6 +205,7 @@ Resources:
       Environment:
         Variables:
           RapidAPIKey: !Ref RapidAPIKey
+          WishlistTable: !Ref WishlistTable
       Layers:
         - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
 

@@ -8,14 +8,15 @@ dynamodb = boto3.client('dynamodb')
 WISHLIST_TABLE = os.environ.get('WishlistTable')
 PRODUCT_TABLE = os.environ.get('ProductTable')
 
-LINK_TO_ID = {
-    "https://": "",
-    "/": "-",
-    "?": "@"
-}
-
 
 def get_id_from_link(link):
+    # NOTE: make sure this method stays the same in LF1
+    LINK_TO_ID = {
+        "https://": "",
+        "/": "-",
+        "?": "@"
+    }
+
     for key, value in LINK_TO_ID.items():
         link = link.replace(key, value)
     return link
