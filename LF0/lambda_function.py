@@ -27,16 +27,17 @@ def init_search():
 
 def lambda_handler(event, context):
     # TODO implement LF0
-
+    
     # Parameters
     imgBucket = os.environ.get('ImgBucket')
     img_key = event['pathParameters']['imgkey']
     img_data = base64.b64decode(event['body'])
-
+    contentType = event['headers']['content-type']
+    
     # # Upload img_key,img_data to s3 bucket imgBucket
     s3 = boto3.resource('s3')
     s3.Bucket(imgBucket).put_object(
-        Key=img_key, Body=img_data, ContentType='image/jpeg')
+        Key=img_key, Body=img_data, ContentType='image/jpeg') #contentType
 
     # Sagemaker Img to embedding
     runtime = boto3.client('runtime.sagemaker')
