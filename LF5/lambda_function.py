@@ -7,7 +7,16 @@ dynamodb = boto3.client('dynamodb')
 PRODUCT_TABLE = os.environ.get('ProductTable')
 PRICE_HISTORY_TABLE = os.environ.get('PriceHistoryTable')
 
-print(PRODUCT_TABLE, PRICE_HISTORY_TABLE)
+
+PRICES = {
+    "2022-04-13": 1.23,
+    "2022-04-14": 0.23,
+    "2022-04-15": 3.23,
+    "2022-04-16": 2.23,
+    "2022-04-17": 1.32,
+    "2022-04-18": 2.12,
+    "2022-04-19": 1.23,
+}
 
 
 def validate(params):
@@ -44,6 +53,18 @@ def parse_item(item):
     }
 
 
+def parse_prices(prices):
+    price_by_date = {}
+
+    for item in prices:
+        date = item['date']['S']
+        price = item['price']['N']
+
+        price_by_date[date] = price
+
+    return price_by_date
+
+
 def get_product_detail(pid):
     response = dynamodb.get_item(
         TableName=PRODUCT_TABLE,
@@ -62,7 +83,21 @@ def get_product_detail(pid):
 
 
 def get_price_histry(pid):
-    pass
+    response = dynamodb.query(
+        TableName=PRICE_HISTORY_TABLE,
+        KeyConditionExpression='pid = :v1',
+        ExpressionAttributeValues={
+            ':v1': {
+                'S': pid
+            }
+        }
+    )
+
+    if "Items" not in response or len(response["Items"]) == 0:
+        return {}
+
+    prices = response["Items"]
+    return parse_prices(prices)
 
 
 def lambda_handler(event, context):
@@ -74,14 +109,14 @@ def lambda_handler(event, context):
         }
 
     pid = parsedParams["pid"]
-    print('pid', pid)
 
     detail = get_product_detail(pid)
+    prices = get_price_histry(pid)
 
     return {
         'statusCode': 200,
         'body': {
             'product': detail,
-            'price_history': []
+            'price_history': prices
         }
     }
