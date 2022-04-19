@@ -1,8 +1,6 @@
 import json
 import os
-import uuid
 import boto3
-import base64
 
 from opensearchpy import OpenSearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
@@ -63,7 +61,7 @@ def lambda_handler(event, context):
     # Parameters
     IMG_BUCKET = os.environ.get('ImgBucket')
     img_key = event['key']
-    print(img_key)  # the embedding
+    print(img_key)
 
     runtime = boto3.client('runtime.sagemaker')
     payload = json.dumps({'bucket': IMG_BUCKET, 'key': img_key})
@@ -108,8 +106,6 @@ def lambda_handler(event, context):
         # return the first title
         'body': json.dumps({
             # return the first title
-            'title': results[0]['_source']['title'],
-            'key': img_key,
-            'bucket': IMG_BUCKET
+            'title': results[0]['_source']['title']
         })
     }
