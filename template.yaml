@@ -384,6 +384,55 @@ Resources:
       Layers:
         - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
 
+# ===== LF5 ====================================================================
+
+  LF5Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      Policies:
+        - PolicyName: LF5BasicExecutionInlinePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource:
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/complaza-LF5:*
+
+  LF5LogGroup:
+        Type: AWS::Logs::LogGroup
+        Properties:
+            LogGroupName: '/aws/lambda/complaza-LF5'
+            RetentionInDays: 30
+
+  LF5:
+    Type: 'AWS::Serverless::Function'
+    DependsOn: LF5LogGroup
+    Properties:
+      FunctionName: 'complaza-LF5'
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./LF5
+      Description: "Get product details and price history"
+      MemorySize: 128
+      Timeout: 20
+      Role: !GetAtt LF5Role.Arn
+      Environment:
+        Variables:
+          ProductTable: !Ref ProductTable
+          PriceHistoryTable: !Ref PriceHistoryTable
+
 # ===== API gateway ============================================================
   
   RestApi:
@@ -466,27 +515,38 @@ Resources:
           /product/{pid}:
             get:
               consumes:
-              - "application/json"
+                - "application/json"
               produces:
-              - "application/json"
+                - "application/json"
               parameters:
-              - name: "pid"
-                in: "path"
-                required: true
-                type: "string"
+                - name: "pid"
+                  in: "path"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"
                   schema:
                     $ref: "#/definitions/Empty"
               x-amazon-apigateway-integration:
-                type: "mock"
+                type: aws
+                httpMethod: "POST"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF5.Arn}/invocations"
+                credentials: arn:aws:iam::210336890849:role/api-gateway-invoke-lambda
                 responses:
                   default:
                     statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestParameters:
+                  integration.request.querystring.pid: "method.request.path.pid"
                 requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
+                  application/json: | 
+                    { 
+                      "pid": "$input.params('pid')"
+                    }
                 passthroughBehavior: "when_no_match"
+                contentHandling: "CONVERT_TO_TEXT"
             options:
               consumes:
               - "application/json"
