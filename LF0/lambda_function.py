@@ -1,5 +1,6 @@
 import json
 import os
+import uuid
 import boto3
 import base64
 
@@ -27,17 +28,17 @@ def init_search():
 
 def lambda_handler(event, context):
     # TODO implement LF0
-    
+
     # Parameters
     imgBucket = os.environ.get('ImgBucket')
-    img_key = event['pathParameters']['imgkey']
+    img_key = uuid()
     img_data = base64.b64decode(event['body'])
-    contentType = event['headers']['content-type']
-    
+    content_type = event['headers']['content-type']
+
     # # Upload img_key,img_data to s3 bucket imgBucket
     s3 = boto3.resource('s3')
     s3.Bucket(imgBucket).put_object(
-        Key=img_key, Body=img_data, ContentType='image/jpeg') #contentType
+        Key=img_key, Body=img_data, ContentType=content_type)  # contentType
 
     # Sagemaker Img to embedding
     runtime = boto3.client('runtime.sagemaker')
@@ -81,5 +82,8 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
         },
         # return the first title
-        'body': json.dumps(results[0]['_source']['title'])
+        'body': {
+            'title': json.dumps(results[0]['_source']['title']),
+            'key': img_key,
+        }
     }

@@ -407,15 +407,10 @@ Resources:
               providerARNs:
                 - !Sub arn:aws:cognito-idp:${AWS::Region}:${UserPoolIdentifier}
         paths:
-          /image/{imgkey}:
+          /image:
             post:
               produces:
               - "application/json"
-              parameters:
-              - name: "imgkey"
-                in: "path"
-                required: true
-                type: "string"
               responses:
                 "200":
                   description: "200 response"
@@ -443,14 +438,9 @@ Resources:
                 contentHandling: "CONVERT_TO_TEXT"
             options:
               consumes:
-              - "application/json"
+                - "application/json"
               produces:
-              - "application/json"
-              parameters:
-              - name: "imgkey"
-                in: "path"
-                required: true
-                type: "string"
+                - "application/json"
               responses:
                 "200":
                   description: "200 response"
@@ -915,6 +905,7 @@ Resources:
             title: "Empty Schema"
         x-amazon-apigateway-binary-media-types:
         - "image/jpg"
+        - "image/png"
 
   Deployment:
     Type: 'AWS::ApiGateway::Deployment'
