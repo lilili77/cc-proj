@@ -32,17 +32,19 @@ def lambda_handler(event, context):
     # Parameters
     IMG_BUCKET = os.environ.get('ImgBucket')
     img_key = str(uuid.uuid1())
+    public_img_key = f"public/{img_key}"
     img_data = base64.b64decode(event['body'])
     content_type = event['headers']['content-type']
 
-    # # Upload img_key,img_data to s3 bucket IMG_BUCKET
+    # Upload img_key,img_data to s3 bucket IMG_BUCKET
     s3 = boto3.resource('s3')
+    # Must put in public/ folder for frontend access
     s3.Bucket(IMG_BUCKET).put_object(
-        Key=img_key, Body=img_data, ContentType=content_type)
+        Key=public_img_key, Body=img_data, ContentType=content_type)
 
     # Sagemaker Img to embedding
     runtime = boto3.client('runtime.sagemaker')
-    payload = json.dumps({'bucket': IMG_BUCKET, 'key': img_key})
+    payload = json.dumps({'bucket': IMG_BUCKET, 'key': public_img_key})
     response = runtime.invoke_endpoint(EndpointName=os.environ['PredictEndPoint'],
                                        ContentType='application/json',
                                        Body=payload)

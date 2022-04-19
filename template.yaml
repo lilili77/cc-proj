@@ -40,7 +40,6 @@ Resources:
                 - !Ref ImgBucket
                 - /*
 
-
 # ===== Databases ==============================================================
 
   SearchHistoryTable:
