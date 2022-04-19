@@ -83,6 +83,7 @@ def lambda_handler(event, context):
         'body': json.dumps({
             # return the first title
             'title': results[0]['_source']['title'],
-            'key': img_key
+            'key': img_key,
+            'bucket': IMG_BUCKET
         })
     }
