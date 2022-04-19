@@ -146,7 +146,7 @@ Resources:
       CodeUri: ./LF0
       Description: "Upload photo to s3 and call ML endpoint to return product names"
       MemorySize: 128
-      Timeout: 10
+      Timeout: 30
       Role: !GetAtt LF0Role.Arn
       Environment:
         Variables:
