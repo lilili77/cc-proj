@@ -80,7 +80,7 @@ def lambda_handler(event, context):
 
     # Openseach k-NN to get a list of title of matching img
     search = init_search()
-    num_match = 5
+    num_match = 3
     query = {
         'size': num_match,
         'query': {
@@ -118,7 +118,7 @@ def lambda_handler(event, context):
         # return the first title
         'body': json.dumps({
             # return the first title
-            'title': title,
+            'title': results[0]['_source']['title'],
             'key': img_key,
             'bucket': IMG_BUCKET
         })
