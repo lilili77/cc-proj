@@ -8,8 +8,14 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
 
 import spacy
+from string import punctuation
+from collections import Counter
+
 
 def init_search():
+    '''
+    Initialize opensearch
+    '''
     host = os.environ['OpensearchEndPoint']
     region = 'us-east-1'
     service = 'es'
@@ -26,10 +32,14 @@ def init_search():
     )
     return search
 
+# Klayers-python38-spacy layer deprecated 2022-08-04T04:59:13
 def extract_keywords(text):
-    
+    '''
+    Extract Proper NOUN, Adjective, NOUN from given text (matched titles combined)
+    Return: a list of 5 most frequent words
+    '''
     pos_tag = ['PROPN', 'ADJ', 'NOUN']
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load("/opt/en_core_web_sm-2.2.5/en_core_web_sm/en_core_web_sm-2.2.5")
     doc = nlp(text.lower())
     
     result = []
@@ -38,8 +48,9 @@ def extract_keywords(text):
             continue
         if(token.pos_ in pos_tag):
             result.append(token.text)
-    print(Counter(result).most_common(5))
+    
     result = [x[0] for x in Counter(result).most_common(5)]
+    print('Extract keywords',result)
     return result
 
 def lambda_handler(event, context):
@@ -50,7 +61,7 @@ def lambda_handler(event, context):
     img_key = str(uuid.uuid1())
     public_img_key = f"public/{img_key}"
     img_data = base64.b64decode(event['body'])
-    content_type = 'image/jpeg' #event['headers']['content-type']
+    content_type = 'image/jpeg' #event['headers']['content-type'] fix upload bug
 
     # Upload img_key,img_data to s3 bucket IMG_BUCKET
     s3 = boto3.resource('s3')
@@ -65,17 +76,18 @@ def lambda_handler(event, context):
                                        ContentType='application/json',
                                        Body=payload)
     response = json.loads(response['Body'].read().decode())
-    print(response)
+    print(response) # the embedding
 
-    # Openseach k-NN to get a list of title
+    # Openseach k-NN to get a list of title of matching img
     search = init_search()
+    num_match = 5
     query = {
-        'size': 3,
+        'size': num_match,
         'query': {
             'knn': {
                 'image-embedding': {
                     'vector': response[0],
-                    'k': 3
+                    'k': num_match
                 }
             }
         }
@@ -85,14 +97,16 @@ def lambda_handler(event, context):
         index='embedding'
     )
     results = response['hits']['hits']
+    # create title list
     title_lst = []
+    print('Matched titles:')
     for result in results:
+        print(result['_source']['title'])
         title_lst.append(result['_source']['title'])
     
     # Keyword extraction from title list
-    text = '.'.join(title_lst)
-    extract_keywords(text)
-    
+    text = ' '.join(title_lst)
+    title = ' '.join(extract_keywords(text))
 
     return {
         'statusCode': 200,
@@ -104,7 +118,7 @@ def lambda_handler(event, context):
         # return the first title
         'body': json.dumps({
             # return the first title
-            'title': results[0]['_source']['title'],
+            'title': title,
             'key': img_key,
             'bucket': IMG_BUCKET
         })
