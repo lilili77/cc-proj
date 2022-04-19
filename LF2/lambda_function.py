@@ -43,7 +43,6 @@ def parse_item(item):
 
 
 def validate(params):
-    print(params)
     uid = params["uid"]
     method = params["method"]
 
@@ -210,7 +209,6 @@ def post_handler(uid, product):
 
 
 def delete_handler(uid, pid):
-    print(uid, pid)
     dynamodb.delete_item(
         TableName=WISHLIST_TABLE,
         Key={

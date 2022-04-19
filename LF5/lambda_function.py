@@ -78,7 +78,6 @@ def get_product_detail(pid):
     if "Item" not in response:
         return None
 
-    print(response)
     return parse_item(response["Item"])
 
 

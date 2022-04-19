@@ -67,7 +67,6 @@ def get_id_from_link(link):
 
 
 def validate(params):
-    print(params)
     q = params['q']
     sort_by = params['sort_by']
     parsedParams = {
