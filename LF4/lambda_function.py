@@ -5,12 +5,11 @@ from bs4 import BeautifulSoup
 from datetime import date
 
 
-
 dynamodb = boto3.client('dynamodb')
 
-WISHLIST_TABLE = os.environ.get('WishlistTable')
 PRODUCT_TABLE = os.environ.get('ProductTable')
-PRODUCTHISTORY_TABLE = 'phtest'
+PRODUCTHISTORY_TABLE = os.environ.get('PriceHistoryTable')
+
 
 def get_price(url):
     # http = urllib3.PoolManager()
@@ -28,7 +27,7 @@ def lambda_handler(event, context):
     response = dynamodb.scan(TableName=PRODUCT_TABLE)
     products = response["Items"]
     today = str(date.today())
- 
+
     for product in products:
         retailer = product["retailer"]["S"]
         if retailer == "Ebay":
@@ -37,15 +36,14 @@ def lambda_handler(event, context):
             id = product["id"]["S"]
             old_price = product["price"]["N"]
             price = get_price(url)
-            
-            
+
             # price_hist = product["price_history"]["SS"]
             # price_hist.append(str(price))
             # print(price_hist)
             # price_date = product["price_date"]["SS"]
             # price_date.append(str(today))
-        
-            update_item = {"price": {"Value": {"S":price}}}
+
+            update_item = {"price": {"Value": {"S": price}}}
             # dynamodb.update_item(TableName=PRODUCT_TABLE, Key=key, AttributeUpdates=update_item)
             item_attr = {
                 'phid': {
@@ -57,14 +55,10 @@ def lambda_handler(event, context):
                 'price': {
                     'N': str(price)
                 }
-                
+
             }
-        
 
             dynamodb.put_item(TableName=PRODUCTHISTORY_TABLE, Item=item_attr)
-            
-       
-        
 
     return {
         'statusCode': 200,
