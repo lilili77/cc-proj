@@ -30,20 +30,19 @@ def lambda_handler(event, context):
     # TODO implement LF0
 
     # Parameters
-    imgBucket = os.environ.get('ImgBucket')
+    IMG_BUCKET = os.environ.get('ImgBucket')
     img_key = str(uuid.uuid1())
     img_data = base64.b64decode(event['body'])
     content_type = event['headers']['content-type']
 
-    # # Upload img_key,img_data to s3 bucket imgBucket
+    # # Upload img_key,img_data to s3 bucket IMG_BUCKET
     s3 = boto3.resource('s3')
-    s3.Bucket(imgBucket).put_object(
-        Key=img_key, Body=img_data, ContentType='image/jpeg')  # contentType
+    s3.Bucket(IMG_BUCKET).put_object(
+        Key=img_key, Body=img_data, ContentType=content_type)
 
-    print(img_key, content_type)
     # Sagemaker Img to embedding
     runtime = boto3.client('runtime.sagemaker')
-    payload = json.dumps({'bucket': imgBucket, 'key': img_key})
+    payload = json.dumps({'bucket': IMG_BUCKET, 'key': img_key})
     response = runtime.invoke_endpoint(EndpointName=os.environ['PredictEndPoint'],
                                        ContentType='application/json',
                                        Body=payload)
@@ -69,11 +68,9 @@ def lambda_handler(event, context):
         index='embedding'
     )
     results = response['hits']['hits']
-    print(results)
+
     for result in results:
         print(result['_source']['title'])
-
-    # TODO: Get keywords from list of titles, call LF1 to search title
 
     return {
         'statusCode': 200,
@@ -83,8 +80,9 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
         },
         # return the first title
-        'body': {
-            'title': json.dumps(results[0]['_source']['title']),
-            'key': img_key,
-        }
+        'body': json.dumps({
+            # return the first title
+            'title': results[0]['_source']['title'],
+            'key': img_key
+        })
     }

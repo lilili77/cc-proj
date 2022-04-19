@@ -900,6 +900,8 @@ Resources:
             title: "Empty Schema"
         x-amazon-apigateway-binary-media-types:
         - "image/jpg"
+        - "image/jpeg"
+        - "image/png"
 
   Deployment:
     Type: 'AWS::ApiGateway::Deployment'
