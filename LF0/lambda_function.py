@@ -98,13 +98,12 @@ def lambda_handler(event, context):
 
     # Keyword extraction from title list
     text = ' '.join(title_lst)
-    title = ' '.join(extract_keywords(text))
+    # title = ' '.join(extract_keywords(text))
 
     return {
         'statusCode': 200,
         # return the first title
         'body': {
-            # return the first title
             'title': results[0]['_source']['title']
         }
     }
