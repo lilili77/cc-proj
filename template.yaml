@@ -2,6 +2,9 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: Complaza backend stack
 Parameters:
+  ImgBucket:
+    Type: String
+    Default: search-image205454-dev
   UserPoolIdentifier:
     Type: String
     Default: 210336890849:userpool/us-east-1_9ofMqoqMr
@@ -13,33 +16,6 @@ Parameters:
     Type: String
 
 Resources:
-
-# ===== Image Bucket ===========================================================
-  
-  ImgBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      AccessControl: PublicReadWrite
-
-  BucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref ImgBucket
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Sid: PublicReadGetObject
-            Effect: Allow
-            Principal: '*'
-            Action:
-              - 's3:GetObject'
-              - 's3:PutObject'
-            Resource: !Join
-              - ''
-              - - 'arn:aws:s3:::'
-                - !Ref ImgBucket
-                - /*
-
 # ===== Databases ==============================================================
 
   SearchHistoryTable:
@@ -459,10 +435,17 @@ Resources:
               providerARNs:
                 - !Sub arn:aws:cognito-idp:${AWS::Region}:${UserPoolIdentifier}
         paths:
-          /image:
+          /image/{key}:
             post:
+              consumes:
+              - "application/json"
               produces:
               - "application/json"
+              parameters:
+              - name: "key"
+                in: "path"
+                required: true
+                type: "string"
               responses:
                 "200":
                   description: "200 response"
@@ -472,15 +455,22 @@ Resources:
                     Access-Control-Allow-Origin:
                       type: "string"
               x-amazon-apigateway-integration:
-                type: "aws_proxy"
+                type: aws
                 httpMethod: "POST"
-                credentials: "arn:aws:iam::210336890849:role/api-gateway-invoke-lambda"
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF0.Arn}/invocations"
+                credentials: arn:aws:iam::210336890849:role/api-gateway-invoke-lambda
                 responses:
                   default:
                     statusCode: "200"
                     responseParameters:
                       method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestParameters:
+                  integration.request.querystring.key: "method.request.path.key"
+                requestTemplates:
+                  application/json: | 
+                    { 
+                      "key": "$input.params('key')"
+                    }
                 passthroughBehavior: "when_no_match"
                 contentHandling: "CONVERT_TO_TEXT"
             options:
@@ -964,10 +954,6 @@ Resources:
           Empty:
             type: "object"
             title: "Empty Schema"
-        x-amazon-apigateway-binary-media-types:
-        - "image/jpg"
-        - "image/jpeg"
-        - "image/png"
 
   Deployment:
     Type: 'AWS::ApiGateway::Deployment'
