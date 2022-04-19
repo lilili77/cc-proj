@@ -103,8 +103,8 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         # return the first title
-        'body': json.dumps({
+        'body': {
             # return the first title
             'title': results[0]['_source']['title']
-        })
+        }
     }
