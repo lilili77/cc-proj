@@ -436,16 +436,16 @@ Resources:
                 - !Sub arn:aws:cognito-idp:${AWS::Region}:${UserPoolIdentifier}
         paths:
           /image/{key}:
-            post:
+            get:
               consumes:
-              - "application/json"
+                - "application/json"
               produces:
-              - "application/json"
+                - "application/json"
               parameters:
-              - name: "key"
-                in: "path"
-                required: true
-                type: "string"
+                - name: "key"
+                  in: "path"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"
@@ -475,9 +475,14 @@ Resources:
                 contentHandling: "CONVERT_TO_TEXT"
             options:
               consumes:
-              - "application/json"
+                - "application/json"
               produces:
-              - "application/json"
+                - "application/json"
+              parameters:
+                - name: "key"
+                  in: "path"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"
