@@ -92,7 +92,7 @@ Resources:
         - AttributeName: pid
           AttributeType: S
         - AttributeName: date
-          KeyType: S
+          AttributeType: S
       KeySchema:
         - AttributeName: pid
           KeyType: HASH
