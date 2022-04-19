@@ -38,7 +38,7 @@ def lambda_handler(event, context):
     # # Upload img_key,img_data to s3 bucket imgBucket
     s3 = boto3.resource('s3')
     s3.Bucket(imgBucket).put_object(
-        Key=img_key, Body=img_data, ContentType=content_type)  # contentType
+        Key=img_key, Body=img_data, ContentType='image/jpeg')  # contentType
 
     print(img_key, content_type)
     # Sagemaker Img to embedding

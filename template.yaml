@@ -422,13 +422,7 @@ Resources:
               x-amazon-apigateway-integration:
                 type: "aws_proxy"
                 httpMethod: "POST"
-                uri: !Join
-                  - ''
-                  - - "arn:aws:apigateway:"
-                    - !Sub ${AWS::Region}
-                    - ":lambda:path/2015-03-31/functions/"
-                    - !GetAtt LF0.Arn
-                    - "/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF0.Arn}/invocations"
                 responses:
                   default:
                     statusCode: "200"
@@ -438,9 +432,9 @@ Resources:
                 contentHandling: "CONVERT_TO_TEXT"
             options:
               consumes:
-                - "application/json"
+              - "application/json"
               produces:
-                - "application/json"
+              - "application/json"
               responses:
                 "200":
                   description: "200 response"
@@ -905,7 +899,6 @@ Resources:
             title: "Empty Schema"
         x-amazon-apigateway-binary-media-types:
         - "image/jpg"
-        - "image/png"
 
   Deployment:
     Type: 'AWS::ApiGateway::Deployment'
