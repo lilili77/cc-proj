@@ -12,6 +12,7 @@ Parameters:
     Type: String
   ImgBucket:
     Type: String
+    Default: search-image205454-dev
   UserPoolIdentifier:
     Type: String
     Default: 210336890849:userpool/us-east-1_9ofMqoqMr

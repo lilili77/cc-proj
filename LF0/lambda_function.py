@@ -60,8 +60,7 @@ def lambda_handler(event, context):
 
     # Parameters
     IMG_BUCKET = os.environ.get('ImgBucket')
-    img_key = event['key']
-    print(img_key)
+    img_key = f"public/{event['key']}"
 
     runtime = boto3.client('runtime.sagemaker')
     payload = json.dumps({'bucket': IMG_BUCKET, 'key': img_key})
