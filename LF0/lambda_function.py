@@ -7,6 +7,7 @@ import base64
 from opensearchpy import OpenSearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
 
+import spacy
 
 def init_search():
     host = os.environ['OpensearchEndPoint']
@@ -25,6 +26,21 @@ def init_search():
     )
     return search
 
+def extract_keywords(text):
+    
+    pos_tag = ['PROPN', 'ADJ', 'NOUN']
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp(text.lower())
+    
+    result = []
+    for token in doc:
+        if(token.text in nlp.Defaults.stop_words or token.text in punctuation):
+            continue
+        if(token.pos_ in pos_tag):
+            result.append(token.text)
+    print(Counter(result).most_common(5))
+    result = [x[0] for x in Counter(result).most_common(5)]
+    return result
 
 def lambda_handler(event, context):
     # TODO implement LF0
@@ -34,7 +50,7 @@ def lambda_handler(event, context):
     img_key = str(uuid.uuid1())
     public_img_key = f"public/{img_key}"
     img_data = base64.b64decode(event['body'])
-    content_type = event['headers']['content-type']
+    content_type = 'image/jpeg' #event['headers']['content-type']
 
     # Upload img_key,img_data to s3 bucket IMG_BUCKET
     s3 = boto3.resource('s3')
@@ -51,7 +67,7 @@ def lambda_handler(event, context):
     response = json.loads(response['Body'].read().decode())
     print(response)
 
-    # Openseach k-NN
+    # Openseach k-NN to get a list of title
     search = init_search()
     query = {
         'size': 3,
@@ -64,15 +80,19 @@ def lambda_handler(event, context):
             }
         }
     }
-
     response = search.search(
         body=query,
         index='embedding'
     )
     results = response['hits']['hits']
-
+    title_lst = []
     for result in results:
-        print(result['_source']['title'])
+        title_lst.append(result['_source']['title'])
+    
+    # Keyword extraction from title list
+    text = '.'.join(title_lst)
+    extract_keywords(text)
+    
 
     return {
         'statusCode': 200,
