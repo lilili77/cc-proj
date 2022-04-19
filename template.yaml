@@ -156,8 +156,7 @@ Resources:
       Layers:
         - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
         - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-opensearch-py:2
-        - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-aws-requests-auth:20
-        # - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-spacy:42
+        - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-spacy:42
 
   LF0ApiInvoke:
     Type: AWS::Lambda::Permission
