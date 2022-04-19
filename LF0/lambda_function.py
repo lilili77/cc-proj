@@ -31,7 +31,7 @@ def lambda_handler(event, context):
 
     # Parameters
     imgBucket = os.environ.get('ImgBucket')
-    img_key = uuid()
+    img_key = str(uuid.uuid1())
     img_data = base64.b64decode(event['body'])
     content_type = event['headers']['content-type']
 
@@ -40,6 +40,7 @@ def lambda_handler(event, context):
     s3.Bucket(imgBucket).put_object(
         Key=img_key, Body=img_data, ContentType=content_type)  # contentType
 
+    print(img_key, content_type)
     # Sagemaker Img to embedding
     runtime = boto3.client('runtime.sagemaker')
     payload = json.dumps({'bucket': imgBucket, 'key': img_key})
