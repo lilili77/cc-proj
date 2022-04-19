@@ -1,2 +1,1 @@
 requests-aws4auth
-git+https://github.com/LIAAD/yake
