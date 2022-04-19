@@ -91,9 +91,13 @@ Resources:
       AttributeDefinitions:
         - AttributeName: pid
           AttributeType: S
+        - AttributeName: date
+          KeyType: S
       KeySchema:
         - AttributeName: pid
           KeyType: HASH
+        - AttributeName: date
+          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 20
         WriteCapacityUnits: 20

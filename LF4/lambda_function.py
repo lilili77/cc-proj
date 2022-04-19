@@ -46,7 +46,7 @@ def lambda_handler(event, context):
             update_item = {"price": {"Value": {"S": price}}}
             # dynamodb.update_item(TableName=PRODUCT_TABLE, Key=key, AttributeUpdates=update_item)
             item_attr = {
-                'phid': {
+                'pid': {
                     'S': id
                 },
                 'date': {
