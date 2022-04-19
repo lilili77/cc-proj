@@ -10,6 +10,11 @@ Parameters:
     Type: String
   OpensearchEndPoint:
     Type: String
+  ImgBucket:
+    Type: String
+  UserPoolIdentifier:
+    Type: String
+    Default: 210336890849:userpool/us-east-1_9ofMqoqMr
 
 Resources:
   AssetsBucket:
@@ -389,7 +394,11 @@ Resources:
                     - !Ref PredictEndPoint
                     - '","OpensearchEndPoint":"'
                     - !Ref OpensearchEndPoint
-                    - '"}'               
+                    - '","ImgBucket":"'
+                    - !Ref ImgBucket
+                    - '","UserPoolIdentifier":"'
+                    - !Ref UserPoolIdentifier
+                    - '"}'
               InputArtifacts:
                 - Name: ClientBuild
               OutputArtifacts:
@@ -414,7 +423,11 @@ Resources:
                     - !Ref PredictEndPoint
                     - '","OpensearchEndPoint":"'
                     - !Ref OpensearchEndPoint
-                    - '"}'             
+                    - '","ImgBucket":"'
+                    - !Ref ImgBucket
+                    - '","UserPoolIdentifier":"'
+                    - !Ref UserPoolIdentifier
+                    - '"}'
               OutputArtifacts: []
               InputArtifacts:
                 - Name: ClientDeploymentOutput
