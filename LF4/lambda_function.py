@@ -17,8 +17,14 @@ def get_price(url):
     response = requests.request("GET", url)
     soup = BeautifulSoup(response.text, features="html.parser")
     soup.prettify()
-    price = soup.find(id="prcIsum")["content"]
-    return float(price)
+    if soup is None:
+        return None
+    price = soup.find(id="prcIsum")
+    if price is not None and "content" in price:
+        price = price["content"]
+        return float(price)
+    else:
+        return None
 
 
 def lambda_handler(event, context):
@@ -29,6 +35,7 @@ def lambda_handler(event, context):
     today = str(date.today())
 
     for product in products:
+        print("here")
         retailer = product["retailer"]["S"]
         if retailer == "Ebay":
             print(product)
@@ -36,6 +43,9 @@ def lambda_handler(event, context):
             id = product["id"]["S"]
             old_price = product["price"]["N"]
             price = get_price(url)
+            if price is None:
+                print(url)
+                continue
 
             # price_hist = product["price_history"]["SS"]
             # price_hist.append(str(price))
@@ -59,8 +69,10 @@ def lambda_handler(event, context):
             }
 
             dynamodb.put_item(TableName=PRODUCTHISTORY_TABLE, Item=item_attr)
+        
 
     return {
         'statusCode': 200,
         'body': "Hello"
     }
+
