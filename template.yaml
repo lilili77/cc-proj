@@ -351,7 +351,7 @@ Resources:
       CodeUri: ./LF4
       Description: "Get price and update price history"
       MemorySize: 128
-      Timeout: 20
+      Timeout: 600
       Role: !GetAtt LF4Role.Arn
       Environment:
         Variables:
