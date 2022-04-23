@@ -1,6 +1,7 @@
 import requests
 import os
 import boto3
+import datetime
 
 ITEMS = [
     {"id": "1", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
@@ -47,6 +48,7 @@ ITEMS = [
 
 dynamodb = boto3.client('dynamodb')
 WISHLIST_TABLE = os.environ.get('WishlistTable')
+SearchHistoryTable = os.environ.get('SearchHistoryTable')
 
 
 VALID_SORTBY = ['price', 'relevance']
@@ -220,6 +222,23 @@ def lambda_handler(event, context):
     # amazon_call("notebook")
 
     # TODO: Shopee API, Parse API returns, Add to user search hist db
+    dynamodb.put_item(
+        TableName=SearchHistoryTable,
+        Item={
+            'uid': {
+                'S': uid
+            },
+            'datetime': {
+                'S': str(datetime.now())
+            },
+            'q': {
+                'S': q
+            },
+            'imgKey': {
+                'S': 'test key'
+            }
+        }
+    )
 
     # TODO: check if product is in the user's wishlist for logged in users
 
