@@ -1,7 +1,7 @@
 import requests
 import os
 import boto3
-import datetime
+from datetime import datetime
 
 ITEMS = [
     {"id": "1", "name": "Kitty 1", "image": "https://loremflickr.com/200/200",
