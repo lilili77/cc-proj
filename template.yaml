@@ -709,6 +709,15 @@ Resources:
                 requestTemplates:
                   application/json: "{\"statusCode\": 200}"
                 passthroughBehavior: "when_no_match"
+                # TODO: add uid parameter
+                # type: "aws"
+                # httpMethod: "POST"
+                # uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF3.Arn}/invocations"
+                # responses:
+                #   default:
+                #     statusCode: "200"
+                # passthroughBehavior: "when_no_match"
+                # contentHandling: "CONVERT_TO_TEXT"
             options:
               consumes:
               - "application/json"

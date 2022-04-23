@@ -15,13 +15,14 @@
 - WishlistTable (uid, pid, created)
 - PriceHistoryTable (pid, date, price)
 ### API gateway
-### Opensearch
-### Sagemaker
+### CodePipeline (CI/CD)
+### OpenSearch
+### SageMaker (ML model)
 
 ## Cloudformation Template
 ### Input
 - From Frontend: Cognito, S3 bucket 
-- From ML: Sagemaker endpoint, Opensearch endpoint
+- From ML: SageMaker endpoint, OpenSearch endpoint
 - External API key
 
 ### Output
