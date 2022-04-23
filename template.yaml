@@ -24,12 +24,12 @@ Resources:
       AttributeDefinitions:
         - AttributeName: uid
           AttributeType: S
-        - AttributeName: date
+        - AttributeName: datetime
           AttributeType: S
       KeySchema:
         - AttributeName: uid
           KeyType: HASH
-        - AttributeName: date
+        - AttributeName: datetime
           KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 20
