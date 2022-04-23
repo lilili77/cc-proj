@@ -2,7 +2,7 @@ import os
 import boto3
 from datetime import datetime
 
-VALID_METHODS = ["GET", "POST", "DELETE"]
+VALID_METHODS = ["GET", "POST", "DELETE", "SEARCH"]
 dynamodb = boto3.client('dynamodb')
 
 WISHLIST_TABLE = os.environ.get('WishlistTable')
@@ -67,6 +67,13 @@ def validate(params):
         parsedParams["pid"] = pid
         if pid == "":
             errors["pid"] = "'pid' can't be empty"
+            
+    if method == "SEARCH":
+        query = params["query"]
+        parsedParams["query"] = query
+        if query == "":
+            errors["query"] = "'query' can't be empty"
+            
 
     return errors, parsedParams
 
@@ -230,6 +237,60 @@ def delete_handler(uid, pid):
         }
     }
 
+def search_handler(uid, query):
+    EMPTY = {
+        'statusCode': 200,
+        'body': {
+            'items': []
+        }
+    }
+    # Find products in user's wishlist
+    response = dynamodb.query(
+        TableName=WISHLIST_TABLE,
+        KeyConditionExpression='uid = :v1',
+        ExpressionAttributeValues={
+            ':v1': {
+                'S': uid
+            }
+        }
+    )
+
+    if "Items" not in response or len(response["Items"]) == 0:
+        return EMPTY
+
+    # Get details of all products from product table
+    items = response["Items"]
+    keys = list(map(lambda item: {'id': {'S': item['pid']['S']}}, items))
+
+    response = dynamodb.batch_get_item(
+        RequestItems={
+            PRODUCT_TABLE: {
+                'Keys': keys
+            }
+        }
+    )
+
+    response = response['Responses']
+
+    if PRODUCT_TABLE not in response:
+        return EMPTY
+
+    items = response[PRODUCT_TABLE]
+    items = list(map(lambda item: parse_item(item), items))
+    filtered_items = []
+    for i in items:
+        if query.lower() in i["name"].lower():
+            filtered_items.append(i)
+            
+            
+    return {
+        'statusCode': 200,
+        'body': {
+            "uid": uid,
+            "items": filtered_items
+        }
+    }
+
 
 def lambda_handler(event, context):
     errors, parsedParams = validate(event)
@@ -250,6 +311,9 @@ def lambda_handler(event, context):
     if method == "DELETE":
         pid = parsedParams["pid"]
         return delete_handler(uid, pid)
+    if method == "SEARCH":
+        query = parsedParams["query"]
+        return search_handler(uid, query)
 
     return {
         'statusCode': 200,
