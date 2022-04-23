@@ -86,10 +86,8 @@ def validate(params):
         else:
             parsedParams["sort_by"] = sort_by
 
-    if "uid" in params:
-        parsedParams["uid"] = params['uid']
-    else:
-        parsedParams["uid"] = ""
+    parsedParams["uid"] = params['uid'] if "uid" in params else ""
+    parsedParams["img"] = params['img'] if "img" in params else ""
 
     return errors, parsedParams
 
@@ -140,8 +138,6 @@ def ebay_call(query, wishlist_items):
 
         id = get_id_from_link(item["link"])
         item["id"] = id
-        if id in wishlist_items:
-            print("found a starred item")
         item["starred"] = id in wishlist_items
         return item
 
@@ -197,7 +193,7 @@ def lambda_handler(event, context):
     q = parsedParams['q']
     sortBy = parsedParams['sort_by']
     uid = parsedParams['uid']
-    imgKey = 'test_key' # TODO: parse imgKey
+    img = parsedParams['img']  # TODO: parse imgKey
 
     # gather user's wishlisted items
     wishlist_items = set()
@@ -226,23 +222,24 @@ def lambda_handler(event, context):
     # TODO: Shopee API, Parse API returns
 
     # Add query to user search hist db
-    dynamodb.put_item(
-        TableName=SearchHistoryTable,
-        Item={
-            'uid': {
-                'S': uid
-            },
-            'datetime': {
-                'S': str(datetime.now())
-            },
-            'q': {
-                'S': q
-            },
-            'imgKey': {
-                'S': imgKey
+    if uid != "":
+        dynamodb.put_item(
+            TableName=SearchHistoryTable,
+            Item={
+                'uid': {
+                    'S': uid
+                },
+                'datetime': {
+                    'S': str(datetime.now())
+                },
+                'q': {
+                    'S': q
+                },
+                'img': {
+                    'S': img
+                }
             }
-        }
-    )
+        )
 
     # TODO: check if product is in the user's wishlist for logged in users
 

@@ -631,6 +631,10 @@ Resources:
                   in: "query"
                   required: true
                   type: "string"
+                - name: "img"
+                  in: "query"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"
@@ -653,10 +657,12 @@ Resources:
                   integration.request.querystring.q: "method.request.querystring.q"
                   integration.request.querystring.sort_by: "method.request.querystring.sort_by"
                   integration.request.querystring.uid: "method.request.querystring.uid"
+                  integration.request.querystring.img: "method.request.querystring.img"
                 requestTemplates:
                   application/json: | 
                     { 
                       "q": "$input.params('q')",
+                      "img": "$input.params('img')",
                       "uid": "$input.params('uid')",
                       "sort_by": "$input.params('sort_by')"
                     }
