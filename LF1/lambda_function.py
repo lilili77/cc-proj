@@ -193,7 +193,7 @@ def lambda_handler(event, context):
     q = parsedParams['q']
     sortBy = parsedParams['sort_by']
     uid = parsedParams['uid']
-    img = parsedParams['img']  # TODO: parse imgKey
+    img = parsedParams['img']
 
     # gather user's wishlisted items
     wishlist_items = set()

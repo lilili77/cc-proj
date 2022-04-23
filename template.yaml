@@ -619,22 +619,22 @@ Resources:
               produces:
                 - "application/json"
               parameters:
-                - name: "q"
-                  in: "query"
-                  required: true
-                  type: "string"
-                - name: "sort_by"
-                  in: "query"
-                  required: true
-                  type: "string"
-                - name: "uid"
-                  in: "query"
-                  required: true
-                  type: "string"
-                - name: "img"
-                  in: "query"
-                  required: true
-                  type: "string"
+              - name: "sort_by"
+                in: "query"
+                required: true
+                type: "string"
+              - name: "uid"
+                in: "query"
+                required: true
+                type: "string"
+              - name: "q"
+                in: "query"
+                required: true
+                type: "string"
+              - name: "img"
+                in: "query"
+                required: true
+                type: "string"
               responses:
                 "200":
                   description: "200 response"
@@ -654,10 +654,10 @@ Resources:
                     responseParameters:
                       method.response.header.Access-Control-Allow-Origin: "'*'"
                 requestParameters:
-                  integration.request.querystring.q: "method.request.querystring.q"
-                  integration.request.querystring.sort_by: "method.request.querystring.sort_by"
                   integration.request.querystring.uid: "method.request.querystring.uid"
                   integration.request.querystring.img: "method.request.querystring.img"
+                  integration.request.querystring.q: "method.request.querystring.q"
+                  integration.request.querystring.sort_by: "method.request.querystring.sort_by"
                 requestTemplates:
                   application/json: | 
                     { 
