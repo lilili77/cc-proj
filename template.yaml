@@ -267,6 +267,13 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/wishlist/*
 
+  LF2SearchApiInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref LF2
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/search/wishlist/*
 # ===== LF3 ====================================================================
 
   LF3Role:
@@ -754,30 +761,57 @@ Resources:
                 requestTemplates:
                   application/json: "{\"statusCode\": 200}"
                 passthroughBehavior: "when_no_match"
-          /search/wishlist:
+          /search/wishlist/{uid}:
             get:
               consumes:
-              - "application/json"
+                - "application/json"
               produces:
-              - "application/json"
+                - "application/json"
+              parameters:
+                - name: "uid"
+                  in: "path"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"
                   schema:
                     $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: "string"
+              security:
+                - ApiCognitoAuthorizer: []
               x-amazon-apigateway-integration:
-                type: "mock"
+                type: aws
+                httpMethod: "POST"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF2.Arn}/invocations"
+                credentials: arn:aws:iam::210336890849:role/api-gateway-invoke-lambda
                 responses:
                   default:
                     statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestParameters:
+                  integration.request.querystring.uid: "method.request.path.uid"
                 requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
+                  application/json: | 
+                    { 
+                      "uid": "$input.params('uid')",
+                      "method": "SEARCH"
+                    }
                 passthroughBehavior: "when_no_match"
+                contentHandling: "CONVERT_TO_TEXT"
             options:
               consumes:
-              - "application/json"
+                - "application/json"
               produces:
-              - "application/json"
+                - "application/json"
+              parameters:
+                - name: "uid"
+                  in: "path"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"
