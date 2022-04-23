@@ -193,9 +193,11 @@ def lambda_handler(event, context):
             'errors': errors
         }
 
+    # Parameters
     q = parsedParams['q']
     sortBy = parsedParams['sort_by']
     uid = parsedParams['uid']
+    imgKey = 'test_key' # TODO: parse imgKey
 
     # gather user's wishlisted items
     wishlist_items = set()
@@ -221,7 +223,9 @@ def lambda_handler(event, context):
     # Amazon: Only first 200 calls is free!!!
     # amazon_call("notebook")
 
-    # TODO: Shopee API, Parse API returns, Add to user search hist db
+    # TODO: Shopee API, Parse API returns
+
+    # Add query to user search hist db
     dynamodb.put_item(
         TableName=SearchHistoryTable,
         Item={
@@ -235,7 +239,7 @@ def lambda_handler(event, context):
                 'S': q
             },
             'imgKey': {
-                'S': 'test key'
+                'S': imgKey
             }
         }
     )
