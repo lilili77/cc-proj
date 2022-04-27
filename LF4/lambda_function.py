@@ -20,7 +20,8 @@ def get_price(url):
     if soup is None:
         return None
     price = soup.find(id="prcIsum")
-    if price is not None and "content" in price:
+    print(price)
+    if price is not None and "content" in str(price):
         price = price["content"]
         return float(price)
     else:
@@ -43,6 +44,7 @@ def lambda_handler(event, context):
             id = product["id"]["S"]
             old_price = product["price"]["N"]
             price = get_price(url)
+            print(price)
             if price is None:
                 print(url)
                 continue
@@ -67,6 +69,7 @@ def lambda_handler(event, context):
                 }
 
             }
+            print("item", item_attr)
 
             dynamodb.put_item(TableName=PRODUCTHISTORY_TABLE, Item=item_attr)
         
