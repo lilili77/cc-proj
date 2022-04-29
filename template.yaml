@@ -772,6 +772,10 @@ Resources:
                   in: "path"
                   required: true
                   type: "string"
+                - name: "q"
+                  in: "query"
+                  required: true
+                  type: "string"
               responses:
                 "200":
                   description: "200 response"
@@ -794,10 +798,12 @@ Resources:
                       method.response.header.Access-Control-Allow-Origin: "'*'"
                 requestParameters:
                   integration.request.querystring.uid: "method.request.path.uid"
+                  integration.request.querystring.q: "method.request.querystring.q"
                 requestTemplates:
                   application/json: | 
                     { 
                       "uid": "$input.params('uid')",
+                      "q": "$input.params('q')",
                       "method": "SEARCH"
                     }
                 passthroughBehavior: "when_no_match"

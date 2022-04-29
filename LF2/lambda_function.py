@@ -1,3 +1,7 @@
+"""
+Interaction with the wishlist table
+"""
+
 import os
 import boto3
 from datetime import datetime
@@ -67,13 +71,12 @@ def validate(params):
         parsedParams["pid"] = pid
         if pid == "":
             errors["pid"] = "'pid' can't be empty"
-            
+
     if method == "SEARCH":
-        query = params["query"]
-        parsedParams["query"] = query
+        query = params["q"]
+        parsedParams["q"] = query
         if query == "":
-            errors["query"] = "'query' can't be empty"
-            
+            errors["q"] = "'q' can't be empty"
 
     return errors, parsedParams
 
@@ -237,6 +240,7 @@ def delete_handler(uid, pid):
         }
     }
 
+
 def search_handler(uid, query):
     EMPTY = {
         'statusCode': 200,
@@ -281,8 +285,7 @@ def search_handler(uid, query):
     for i in items:
         if query.lower() in i["name"].lower():
             filtered_items.append(i)
-            
-            
+
     return {
         'statusCode': 200,
         'body': {
@@ -312,7 +315,7 @@ def lambda_handler(event, context):
         pid = parsedParams["pid"]
         return delete_handler(uid, pid)
     if method == "SEARCH":
-        query = parsedParams["query"]
+        query = parsedParams["q"]
         return search_handler(uid, query)
 
     return {
