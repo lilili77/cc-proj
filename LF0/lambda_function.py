@@ -96,7 +96,7 @@ def lambda_handler(event, context):
     print(result['_source']['title'])
     print(result['_score'])
     
-    title = result['_source']['title'] if result['_score'] > 0.7 else ""
+    title = result['_source']['title'] if result['_score'] > 0.5 else ""
     
     # create title list
     # title_lst = []
