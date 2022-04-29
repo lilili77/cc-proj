@@ -259,21 +259,22 @@ Resources:
           WishlistTable: !Ref WishlistTable
           ProductTable: !Ref ProductTable
 
-  LF2ApiInvoke:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: "lambda:InvokeFunction"
-      FunctionName: !Ref LF2
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/wishlist/*
+  # LF2ApiInvoke:
+  #   Type: AWS::Lambda::Permission
+  #   Properties:
+  #     Action: "lambda:InvokeFunction"
+  #     FunctionName: !Ref LF2
+  #     Principal: "apigateway.amazonaws.com"
+  #     SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/wishlist/*
 
-  LF2SearchApiInvoke:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: "lambda:InvokeFunction"
-      FunctionName: !Ref LF2
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/search/wishlist/*
+  # LF2SearchApiInvoke:
+  #   Type: AWS::Lambda::Permission
+  #   Properties:
+  #     Action: "lambda:InvokeFunction"
+  #     FunctionName: !Ref LF2
+  #     Principal: "apigateway.amazonaws.com"
+  #     SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/search/wishlist/*
+
 # ===== LF3 ====================================================================
 
   LF3Role:
@@ -375,7 +376,7 @@ Resources:
       Layers:
         - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
 
-# Trigger LF4 1/day
+  # Trigger LF4 1/day
   LF4ScheduledRule: 
     Type: AWS::Events::Rule
     Properties: 
@@ -387,7 +388,8 @@ Resources:
             Fn::GetAtt:
               - "LF4"
               - "Arn"
-          Id: "TargetFunctionV1"  
+          Id: "TargetFunctionV1"
+  
   PermissionForEventsToInvokeLambda: 
     Type: AWS::Lambda::Permission
     Properties: 
