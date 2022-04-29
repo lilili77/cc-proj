@@ -150,7 +150,7 @@ def amazon_call(query):
     """
     Amazon external API call
     Para: query:string
-    Return: list of items
+    External Call response: list of items
         item example
         {
             "isBestSeller": true,
@@ -178,8 +178,90 @@ def amazon_call(query):
         "GET", url, headers=headers, params=querystring)
     print("Amazon return:", response.text)
     response = response.json()
-    return response['docs']
+    
+    items = []
+    for idx, item in enumerate(response['docs'][:ITEM_COUNT]):
+        items.append({
+          "id": idx+1, # start with 1?
+          "name": item['product_title'],
+          "image": item['product_main_image_url'],
+          "price": item['app_sale_price'],
+          "link": item['product_detail_url'],
+          "starred": "False"
+        })
+        
+    return items
 
+def shopee_call(query):
+    """
+    Shopee external API call
+    Para: query:string
+    Return: list of items
+    Latency: 1,641ms
+    Pricing: $9.00/mo; 10,000/mo; +$0.001 if exceed limit
+    """
+    url = "https://shopee.p.rapidapi.com/shopee.sg/search"
+    
+    # Don't replace space to %20 here
+    querystring = {"keyword":query}
+    
+    headers = {
+    	"X-RapidAPI-Host": "shopee.p.rapidapi.com",
+    	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
+    }
+    
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    
+    print(response.text)
+    response = response.json()
+    
+    items = []
+    for idx, item in enumerate(response['data']['items'][:ITEM_COUNT]):
+        items.append({
+          "id": idx+1, # start with 1?
+          "name": item['name'],
+          "image": item['image'],
+          "price": item['price_min'],
+          "link": f"https://shopee.sg/product/{item['shop_id']}/{item['item_id']}",
+          "starred": "False"
+        })
+        
+    return items
+    
+def taobao_call(query):
+    """
+    Taobao external API call
+    Para: query:string
+    Return: list of items
+    Latency: 481ms
+    Pricing: $20.00/mo; 2,000/day; +$0.008 if exceed limit
+    """
+    url = "https://taobao-api.p.rapidapi.com/api"
+    
+    querystring = {"api":"item_search","page_size":"40","q":query}
+    
+    headers = {
+    	"X-RapidAPI-Host": "taobao-api.p.rapidapi.com",
+    	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
+    }
+    
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    
+    print(response.text)
+    response = response.json()
+    
+    items = []
+    for idx, item in enumerate(response['result']['item'][:ITEM_COUNT]):
+        items.append({
+          "id": idx+1, # start with 1?
+          "name": item['title'],
+          "image": item['pic'],
+          "price": item['price'],
+          "link": item['detail_url'],
+          "starred": "False"
+        })
+        
+    return items
 
 def lambda_handler(event, context):
     errors, parsedParams = validate(event)
@@ -213,13 +295,15 @@ def lambda_handler(event, context):
                 map(lambda item: item['pid']['S'], response["Items"]))
 
     # External API call
-    # Ebay: Unlimited calls
+    
+    # Ebay: Unlimited/mo
     ebay_items = ebay_call(q, wishlist_items)
-
-    # Amazon: Only first 200 calls is free!!!
-    # amazon_call("notebook")
-
-    # TODO: Shopee API, Parse API returns
+    # Amazon: 200/mo for now
+    amazon_items = amazon_call(q)
+    # Shopee: 10,000/mo
+    shopee_items = shopee_call(q)
+    # Taobao: 2,000/day
+    alibaba_items = taobao_call(q)
 
     # Add query to user search hist db
     if uid != "":
@@ -251,10 +335,10 @@ def lambda_handler(event, context):
             "sort_by": sortBy,
             "count": len(ITEMS),
             "items": {
-                "Amazon": ITEMS,
+                "Amazon": amazon_items,
                 "Ebay": ebay_items,
-                "Alibaba": ITEMS,
-                "Shopee": ITEMS
+                "Alibaba": alibaba_items,
+                "Shopee": shopee_items
             }
         }
     }
