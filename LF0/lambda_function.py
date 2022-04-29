@@ -89,21 +89,30 @@ def lambda_handler(event, context):
         index='embedding'
     )
     results = response['hits']['hits']
+    
+    # Check first title confidence
+    print('Matched title:')
+    result = results[0]
+    print(result['_source']['title'])
+    print(result['_score'])
+    
+    title = result['_source']['title'] if result['_score'] > 0.7 else ""
+    
     # create title list
-    title_lst = []
-    print('Matched titles:')
-    for result in results:
-        print(result['_source']['title'])
-        title_lst.append(result['_source']['title'])
+    # title_lst = []
+    # for result in results:
+    #     print(result['_source']['title'])
+    #     print(result['_score'])
+    #     title_lst.append(result['_source']['title'])
 
     # Keyword extraction from title list
-    text = ' '.join(title_lst)
+    # text = ' '.join(title_lst)
     # title = ' '.join(extract_keywords(text))
 
     return {
         'statusCode': 200,
         # return the first title
         'body': {
-            'title': results[0]['_source']['title']
+            'title': title
         }
     }
