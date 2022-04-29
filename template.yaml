@@ -259,22 +259,6 @@ Resources:
           WishlistTable: !Ref WishlistTable
           ProductTable: !Ref ProductTable
 
-  # LF2ApiInvoke:
-  #   Type: AWS::Lambda::Permission
-  #   Properties:
-  #     Action: "lambda:InvokeFunction"
-  #     FunctionName: !Ref LF2
-  #     Principal: "apigateway.amazonaws.com"
-  #     SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/wishlist/*
-
-  # LF2SearchApiInvoke:
-  #   Type: AWS::Lambda::Permission
-  #   Properties:
-  #     Action: "lambda:InvokeFunction"
-  #     FunctionName: !Ref LF2
-  #     Principal: "apigateway.amazonaws.com"
-  #     SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/search/wishlist/*
-
 # ===== LF3 ====================================================================
 
   LF3Role:
@@ -766,18 +750,18 @@ Resources:
           /search/wishlist/{uid}:
             get:
               consumes:
-                - "application/json"
+              - "application/json"
               produces:
-                - "application/json"
+              - "application/json"
               parameters:
-                - name: "uid"
-                  in: "path"
-                  required: true
-                  type: "string"
-                - name: "q"
-                  in: "query"
-                  required: true
-                  type: "string"
+              - name: "uid"
+                in: "path"
+                required: true
+                type: "string"
+              - name: "q"
+                in: "query"
+                required: true
+                type: "string"
               responses:
                 "200":
                   description: "200 response"
@@ -787,7 +771,7 @@ Resources:
                     Access-Control-Allow-Origin:
                       type: "string"
               security:
-                - ApiCognitoAuthorizer: []
+              - ApiCognitoAuthorizer: []
               x-amazon-apigateway-integration:
                 type: aws
                 httpMethod: "POST"
@@ -838,8 +822,8 @@ Resources:
                   default:
                     statusCode: "200"
                     responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
                       method.response.header.Access-Control-Allow-Origin: "'*'"
                 requestTemplates:
                   application/json: "{\"statusCode\": 200}"
