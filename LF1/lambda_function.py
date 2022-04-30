@@ -179,6 +179,9 @@ def amazon_call(query):
     print("Amazon return:", response.text)
     response = response.json()
     
+    if not response['docs']:
+        return []
+        
     items = []
     for idx, item in enumerate(response['docs'][:ITEM_COUNT]):
         items.append({
@@ -215,6 +218,9 @@ def shopee_call(query):
     print(response.text)
     response = response.json()
     
+    if not response['data']['items']:
+        return []
+    
     items = []
     for idx, item in enumerate(response['data']['items'][:ITEM_COUNT]):
         items.append({
@@ -249,6 +255,9 @@ def taobao_call(query):
     
     print(response.text)
     response = response.json()
+    
+    if response['result']['status']['msg'] == 'error':
+        return []
     
     items = []
     for idx, item in enumerate(response['result']['item'][:ITEM_COUNT]):
@@ -295,7 +304,8 @@ def lambda_handler(event, context):
                 map(lambda item: item['pid']['S'], response["Items"]))
 
     # External API call
-    
+    ebay_items = amazon_items = shopee_items = alibaba_items = ITEMS
+    print('q',q)
     # Ebay: Unlimited/mo
     ebay_items = ebay_call(q, wishlist_items)
     # Amazon: 200/mo for now
