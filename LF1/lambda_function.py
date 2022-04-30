@@ -309,7 +309,7 @@ def lambda_handler(event, context):
     # Ebay: Unlimited/mo
     ebay_items = ebay_call(q, wishlist_items)
     # Amazon: 200/mo for now
-    amazon_items = amazon_call(q)
+    # amazon_items = amazon_call(q)
     # Shopee: 10,000/mo
     shopee_items = shopee_call(q)
     # Taobao: 2,000/day
