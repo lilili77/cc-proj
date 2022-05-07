@@ -776,6 +776,88 @@ Resources:
                 requestTemplates:
                   application/json: "{\"statusCode\": 200}"
                 passthroughBehavior: "when_no_match"
+
+          /search/historysearch/{uid}:
+            get:
+              consumes:
+              - "application/json"
+              produces:
+              - "application/json"
+              parameters:
+              - name: "uid"
+                in: "path"
+                required: true
+                type: "string"
+              - name: "q"
+                in: "query"
+                required: true
+                type: "string"
+              responses:
+                "200":
+                  description: "200 response"
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: "string"
+              security:
+              - ApiCognitoAuthorizer: []
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: "POST"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LF3.Arn}/invocations"
+                credentials: arn:aws:iam::210336890849:role/api-gateway-invoke-lambda
+                responses:
+                  default:
+                    statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestParameters:
+                  integration.request.querystring.uid: "method.request.path.uid"
+                  integration.request.querystring.q: "method.request.querystring.q"
+                requestTemplates:
+                  application/json: | 
+                    { 
+                      "uid": "$input.params('uid')",
+                      "q": "$input.params('q')",
+                      "method": "SEARCH"
+                    }
+                passthroughBehavior: "when_no_match"
+                contentHandling: "CONVERT_TO_TEXT"
+            options:
+              consumes:
+                - "application/json"
+              produces:
+                - "application/json"
+              parameters:
+                - name: "uid"
+                  in: "path"
+                  required: true
+                  type: "string"
+              responses:
+                "200":
+                  description: "200 response"
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: "string"
+                    Access-Control-Allow-Methods:
+                      type: "string"
+                    Access-Control-Allow-Headers:
+                      type: "string"
+              x-amazon-apigateway-integration:
+                type: "mock"
+                responses:
+                  default:
+                    statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                requestTemplates:
+                  application/json: "{\"statusCode\": 200}"
+                passthroughBehavior: "when_no_match"
           # END LF3 search/history and LF3 search/history_search 
           /search/wishlist/{uid}:
             get:
