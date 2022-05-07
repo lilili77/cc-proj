@@ -309,14 +309,23 @@ Resources:
       Layers:
         - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-requests:28
 
-  LF3ApiInvoke:
+  LF3ApiInvoke1:
     DependsOn: RestApi
     Type: AWS::Lambda::Permission
     Properties:
       Action: "lambda:InvokeFunction"
       FunctionName: !Ref LF3
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/search/*/*
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/search/historysearch/*
+  
+  LF3ApiInvoke2:
+    DependsOn: RestApi
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref LF3
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/search/history/*
 
 # ===== LF4 ====================================================================
 
