@@ -316,7 +316,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       FunctionName: !Ref LF3
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/search/historysearch/*
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/history/*
   
   LF3ApiInvoke2:
     DependsOn: RestApi
@@ -709,7 +709,7 @@ Resources:
                   application/json: "{\"statusCode\": 200}"
                 passthroughBehavior: "when_no_match"
           # START LF3 search/history and LF3 search/history_search
-          /search/history/{uid}:
+          /history/{uid}:
             get:
               consumes:
               - "application/json"
@@ -786,7 +786,7 @@ Resources:
                   application/json: "{\"statusCode\": 200}"
                 passthroughBehavior: "when_no_match"
 
-          /search/historysearch/{uid}:
+          /search/history/{uid}:
             get:
               consumes:
               - "application/json"
