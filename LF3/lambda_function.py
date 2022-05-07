@@ -20,7 +20,7 @@ def get_search_hist(uid):
     # searchHistory is a list of tuple (q,datetime,imgKey)
     searchHistory = []
     for item in response['Items']:
-        searchHistory.append((item['q']['S'],item['datetime']['S'],item['imgKey']['S']))
+        searchHistory.append((item['q']['S'],item['datetime']['S'],item['img']['S']))
     print(searchHistory)
     
     return {
@@ -71,13 +71,17 @@ def search_search_hist(uid,q):
     
 
 def lambda_handler(event, context):
-    # TODO: Get uid, q and path from API call then parse
 
-    uid = '084d4246-b6fe-402b-9da4-0a6e95335700'
-    q = 'vic'
-    
-    # Get search history
-    # return get_search_hist(uid)
-    
-    # Search search history
-    return search_search_hist(uid,q)
+    print("event", event)
+    uid = event['uid']
+    method = event['method']
+
+    if method == "GET_HISTORY":
+        print('in GET_HISTORY')
+        # Get search history
+        return get_search_hist(uid)
+    elif method == "SEARCH":
+        # Search search history
+        print('in SEARCH')
+        q = event['q']
+        return search_search_hist(uid,q)
