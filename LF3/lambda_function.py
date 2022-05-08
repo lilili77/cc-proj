@@ -101,7 +101,7 @@ def search_handler(uid, q):
 
     filtered_items = []
     for item in items:
-        if q.lower() in item['q']['S'].lower():
+        if q.lower() in item["title"].lower():
             filtered_items.append(item)
 
     if not filtered_items:
