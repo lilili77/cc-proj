@@ -86,6 +86,7 @@ def search_handler(uid, q):
     response = dynamodb.query(
         TableName=SearchHistoryTable,
         KeyConditionExpression='uid = :v1',
+        ScanIndexForward=False
         ExpressionAttributeValues={
             ':v1': {
                 'S': uid
