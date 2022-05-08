@@ -129,24 +129,27 @@ def ebay_call(query, wishlist_items):
         # remove $ from price
         price = item["price"]
         if "to" in price:
-            item["price"] = price.split("to")[0][1:].strip()
+            price = price.split("to")[0][1:].strip()
         else:
-            item["price"] = price[1:]
-
-        item["link"] = item["link"].split('?')[0]
-        item["retailer"] = "Ebay"
+            price = price[1:]
 
         id = get_id_from_link(item["link"])
-        item["id"] = id
-        item["starred"] = id in wishlist_items
-        return item
+        return {
+            "id": id,
+            "image": item["image"],
+            "link": item["link"].split('?')[0],
+            "name": item["name"],
+            "price": price,
+            "retailer": "Ebay",
+            "starred": id in wishlist_items
+        }
 
     # NOTE: the first item in the products list is not valid
     return list(map(lambda i: parse_item(i), response['products'][1:1+ITEM_COUNT]))
 
 
 # IMPORTANT only 200 calls per mo is free!!!
-def amazon_call(query):
+def amazon_call(query, wishlist_items):
     """
     Amazon external API call
     Para: query:string
@@ -196,7 +199,7 @@ def amazon_call(query):
     return items
 
 
-def shopee_call(query):
+def shopee_call(query, wishlist_items):
     """
     Shopee external API call
     Para: query:string
@@ -222,21 +225,24 @@ def shopee_call(query):
     if not response['data']['items']:
         return []
 
-    items = []
-    for idx, item in enumerate(response['data']['items'][:ITEM_COUNT]):
-        items.append({
-            "id": idx+1,  # start with 1?
-            "name": item['name'],
-            "image": item['image'],
+    def parse_item(item):
+        link = f"https://shopee.sg/product/{item['shop_id']}/{item['item_id']}",
+        id = get_id_from_link(link)
+
+        return {
+            "id": id,
+            "image": item["image"],
+            "link": link,
+            "name": item["name"],
             "price": item['price_min'],
-            "link": f"https://shopee.sg/product/{item['shop_id']}/{item['item_id']}",
-            "starred": "False"
-        })
+            "retailer": "Shopee",
+            "starred": id in wishlist_items
+        }
 
-    return items
+    return list(map(lambda i: parse_item(i), response['data']['items'][:ITEM_COUNT]))
 
 
-def taobao_call(query):
+def taobao_call(query, wishlist_items):
     """
     Taobao external API call
     Para: query:string
@@ -261,18 +267,20 @@ def taobao_call(query):
     if response['result']['status']['msg'] == 'error':
         return []
 
-    items = []
-    for idx, item in enumerate(response['result']['item'][:ITEM_COUNT]):
-        items.append({
-            "id": idx+1,  # start with 1?
-            "name": item['title'],
-            "image": item['pic'],
-            "price": item['price'],
-            "link": item['detail_url'],
-            "starred": "False"
-        })
+    def parse_item(item):
+        id = get_id_from_link(item["detail_url"])
 
-    return items
+        return {
+            "id": id,
+            "image": item["pic"],
+            "link": item["detail_url"],
+            "name": item["title"],
+            "price": item['price'],
+            "retailer": "Alibaba",
+            "starred": id in wishlist_items
+        }
+
+    return list(map(lambda i: parse_item(i), response['result']['item'][:ITEM_COUNT]))
 
 
 def lambda_handler(event, context):
@@ -314,9 +322,9 @@ def lambda_handler(event, context):
     # Amazon: 200/mo for now
     # amazon_items = amazon_call(q)
     # Shopee: 10,000/mo
-    shopee_items = shopee_call(q)
+    shopee_items = shopee_call(q, wishlist_items)
     # Taobao: 2,000/day
-    alibaba_items = taobao_call(q)
+    alibaba_items = taobao_call(q, wishlist_items)
 
     # Add query to user search hist db
     if uid != "":
