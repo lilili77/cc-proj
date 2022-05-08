@@ -226,7 +226,7 @@ def shopee_call(query, wishlist_items):
         return []
 
     def parse_item(item):
-        link = f"https://shopee.sg/product/{item['shop_id']}/{item['item_id']}",
+        link = f"https://shopee.sg/product/{item['shop_id']}/{item['item_id']}"
         id = get_id_from_link(link)
 
         return {
@@ -234,7 +234,7 @@ def shopee_call(query, wishlist_items):
             "image": item["image"],
             "link": link,
             "name": item["name"],
-            "price": item['price_min'],
+            "price": item["price_min"],
             "retailer": "Shopee",
             "starred": id in wishlist_items
         }
@@ -268,13 +268,14 @@ def taobao_call(query, wishlist_items):
         return []
 
     def parse_item(item):
-        id = get_id_from_link(item["detail_url"])
+        link = f"https:{item['detail_url']}"
+        id = get_id_from_link(link)
 
         return {
             "id": id,
-            "image": item["pic"],
-            "link": item["detail_url"],
-            "name": item["title"],
+            "image": f"https:{item['pic']}",
+            "link": link,
+            "name": item['title'],
             "price": item['price'],
             "retailer": "Alibaba",
             "starred": id in wishlist_items
@@ -345,8 +346,6 @@ def lambda_handler(event, context):
                 }
             }
         )
-
-    # TODO: check if product is in the user's wishlist for logged in users
 
     return {
         'statusCode': 200,
