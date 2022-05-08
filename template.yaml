@@ -259,6 +259,24 @@ Resources:
           WishlistTable: !Ref WishlistTable
           ProductTable: !Ref ProductTable
 
+  LF2ApiInvoke1:
+    DependsOn: RestApi
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref LF2
+      Principal: 'apigateway.amazonaws.com'
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/wishlist/*
+
+  LF2ApiInvoke2:
+    DependsOn: RestApi
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref LF2
+      Principal: 'apigateway.amazonaws.com'
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/search/wishlist/*
+
   # ===== LF3 ====================================================================
 
   LF3Role:
@@ -452,6 +470,15 @@ Resources:
         Variables:
           ProductTable: !Ref ProductTable
           PriceHistoryTable: !Ref PriceHistoryTable
+
+  LF5ApiInvoke:
+    DependsOn: RestApi
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref LF5
+      Principal: 'apigateway.amazonaws.com'
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/product/*
 
   # ===== API gateway ============================================================
 
