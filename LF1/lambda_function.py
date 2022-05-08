@@ -176,24 +176,25 @@ def amazon_call(query):
     }
     response = requests.request(
         "GET", url, headers=headers, params=querystring)
-    print("Amazon return:", response.text)
+
     response = response.json()
-    
+
     if not response['docs']:
         return []
-        
+
     items = []
     for idx, item in enumerate(response['docs'][:ITEM_COUNT]):
         items.append({
-          "id": idx+1, # start with 1?
-          "name": item['product_title'],
-          "image": item['product_main_image_url'],
-          "price": item['app_sale_price'],
-          "link": item['product_detail_url'],
-          "starred": "False"
+            "id": idx+1,  # start with 1?
+            "name": item['product_title'],
+            "image": item['product_main_image_url'],
+            "price": item['app_sale_price'],
+            "link": item['product_detail_url'],
+            "starred": "False"
         })
-        
+
     return items
+
 
 def shopee_call(query):
     """
@@ -204,36 +205,37 @@ def shopee_call(query):
     Pricing: $9.00/mo; 10,000/mo; +$0.001 if exceed limit
     """
     url = "https://shopee.p.rapidapi.com/shopee.sg/search"
-    
+
     # Don't replace space to %20 here
-    querystring = {"keyword":query}
-    
+    querystring = {"keyword": query}
+
     headers = {
-    	"X-RapidAPI-Host": "shopee.p.rapidapi.com",
-    	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
+        "X-RapidAPI-Host": "shopee.p.rapidapi.com",
+        "X-RapidAPI-Key": os.environ.get('RapidAPIKey')
     }
-    
-    response = requests.request("GET", url, headers=headers, params=querystring)
-    
-    print(response.text)
+
+    response = requests.request(
+        "GET", url, headers=headers, params=querystring)
+
     response = response.json()
-    
+
     if not response['data']['items']:
         return []
-    
+
     items = []
     for idx, item in enumerate(response['data']['items'][:ITEM_COUNT]):
         items.append({
-          "id": idx+1, # start with 1?
-          "name": item['name'],
-          "image": item['image'],
-          "price": item['price_min'],
-          "link": f"https://shopee.sg/product/{item['shop_id']}/{item['item_id']}",
-          "starred": "False"
+            "id": idx+1,  # start with 1?
+            "name": item['name'],
+            "image": item['image'],
+            "price": item['price_min'],
+            "link": f"https://shopee.sg/product/{item['shop_id']}/{item['item_id']}",
+            "starred": "False"
         })
-        
+
     return items
-    
+
+
 def taobao_call(query):
     """
     Taobao external API call
@@ -243,34 +245,35 @@ def taobao_call(query):
     Pricing: $20.00/mo; 2,000/day; +$0.008 if exceed limit
     """
     url = "https://taobao-api.p.rapidapi.com/api"
-    
-    querystring = {"api":"item_search","page_size":"40","q":query}
-    
+
+    querystring = {"api": "item_search", "page_size": "40", "q": query}
+
     headers = {
-    	"X-RapidAPI-Host": "taobao-api.p.rapidapi.com",
-    	"X-RapidAPI-Key": os.environ.get('RapidAPIKey')
+        "X-RapidAPI-Host": "taobao-api.p.rapidapi.com",
+        "X-RapidAPI-Key": os.environ.get('RapidAPIKey')
     }
-    
-    response = requests.request("GET", url, headers=headers, params=querystring)
-    
-    print(response.text)
+
+    response = requests.request(
+        "GET", url, headers=headers, params=querystring)
+
     response = response.json()
-    
+
     if response['result']['status']['msg'] == 'error':
         return []
-    
+
     items = []
     for idx, item in enumerate(response['result']['item'][:ITEM_COUNT]):
         items.append({
-          "id": idx+1, # start with 1?
-          "name": item['title'],
-          "image": item['pic'],
-          "price": item['price'],
-          "link": item['detail_url'],
-          "starred": "False"
+            "id": idx+1,  # start with 1?
+            "name": item['title'],
+            "image": item['pic'],
+            "price": item['price'],
+            "link": item['detail_url'],
+            "starred": "False"
         })
-        
+
     return items
+
 
 def lambda_handler(event, context):
     errors, parsedParams = validate(event)
@@ -305,7 +308,7 @@ def lambda_handler(event, context):
 
     # External API call
     ebay_items = amazon_items = shopee_items = alibaba_items = ITEMS
-    print('q',q)
+
     # Ebay: Unlimited/mo
     ebay_items = ebay_call(q, wishlist_items)
     # Amazon: 200/mo for now

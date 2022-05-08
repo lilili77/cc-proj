@@ -56,8 +56,6 @@ def extract_keywords(text):
 
 
 def lambda_handler(event, context):
-    # TODO implement LF0
-
     # Parameters
     IMG_BUCKET = os.environ.get('ImgBucket')
     img_key = f"public/{event['key']}"
@@ -68,7 +66,6 @@ def lambda_handler(event, context):
                                        ContentType='application/json',
                                        Body=payload)
     response = json.loads(response['Body'].read().decode())
-    print(response)  # the embedding
 
     # Openseach k-NN to get a list of title of matching img
     search = init_search()
@@ -89,25 +86,10 @@ def lambda_handler(event, context):
         index='embedding'
     )
     results = response['hits']['hits']
-    
-    # Check first title confidence
-    print('Matched title:')
-    result = results[0]
-    print(result['_source']['title'])
-    print(result['_score'])
-    
-    title = result['_source']['title'] if result['_score'] > 0.5 else ""
-    
-    # create title list
-    # title_lst = []
-    # for result in results:
-    #     print(result['_source']['title'])
-    #     print(result['_score'])
-    #     title_lst.append(result['_source']['title'])
 
-    # Keyword extraction from title list
-    # text = ' '.join(title_lst)
-    # title = ' '.join(extract_keywords(text))
+    # Check first title confidence
+    result = results[0]
+    title = result['_source']['title'] if result['_score'] > 0.5 else ""
 
     return {
         'statusCode': 200,

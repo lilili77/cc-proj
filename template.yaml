@@ -735,7 +735,6 @@ Resources:
                 requestTemplates:
                   application/json: '{"statusCode": 200}'
                 passthroughBehavior: 'when_no_match'
-          # START LF3 search/history and LF3 search/history_search
           /history/{uid}:
             get:
               consumes:
@@ -811,7 +810,6 @@ Resources:
                 requestTemplates:
                   application/json: '{"statusCode": 200}'
                 passthroughBehavior: 'when_no_match'
-
           /search/history/{uid}:
             get:
               consumes:
@@ -893,7 +891,6 @@ Resources:
                 requestTemplates:
                   application/json: '{"statusCode": 200}'
                 passthroughBehavior: 'when_no_match'
-          # END LF3 search/history and LF3 search/history_search
           /search/wishlist/{uid}:
             get:
               consumes:
