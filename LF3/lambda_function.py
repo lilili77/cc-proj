@@ -43,11 +43,11 @@ def get_search_history(uid):
         }
     )
 
-    # searchHistory is a list of tuple (q,datetime,imgKey)
+    # searchHistory is a list of objects {q,datetime,imgKey}
     searchHistory = []
     for item in response['Items']:
         searchHistory.append(
-            (item['q']['S'], item['datetime']['S'], item['img']['S']))
+            {'q': item['q']['S'], 'date': item['datetime']['S'], 'image': item['img']['S']})
 
     return {
         'statusCode': 200,
