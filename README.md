@@ -11,10 +11,12 @@
 - LF5: Get product details and price history
 
 ### Databases
-- SearchHistoryTable (uid, datetime, imgKey, q)
-- ProductTable (id, created, image, link, name, price, retailer)
-- WishlistTable (uid, pid, created)
-- PriceHistoryTable (pid, date, price)
+Table Name | Hash Key | Range Key | Other Fields
+--- | --- | --- | ---
+SearchHistoryTable | uid | datetime | imgKey, q
+ProductTable | id | created | image, link, name, price, retailer
+WishlistTable | uid | pid | created
+PriceHistoryTable | pid | date | price
 
 ### API gateway
 Endpoint  | Description | Lambda Fn | Auth
