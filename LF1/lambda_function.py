@@ -234,7 +234,7 @@ def shopee_call(query, wishlist_items):
             "image": item["image"],
             "link": link,
             "name": item["name"],
-            "price": item["price_min"],
+            "price": str(item["price_min"]),
             "retailer": "Shopee",
             "starred": id in wishlist_items
         }
