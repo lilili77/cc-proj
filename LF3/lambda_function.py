@@ -32,39 +32,26 @@ def validate(params):
     return errors, parsedParams
 
 
-def get_search_history(uid):
-    response = dynamodb.query(
-        TableName=SearchHistoryTable,
-        KeyConditionExpression='uid = :v1',
-        ExpressionAttributeValues={
-            ':v1': {
-                'S': uid
-            }
-        }
-    )
-
-    # searchHistory is a list of objects {q,datetime,imgKey}
-    searchHistory = []
-    for item in response['Items']:
-        searchHistory.append(
-            {'q': item['q']['S'], 'date': item['datetime']['S'], 'image': item['img']['S']})
+def parse_item(item):
+    title = item['q']['S']
+    date = item['datetime']['S']
+    image = item['img']['S']
 
     return {
-        'statusCode': 200,
-        'body': {
-            "items": searchHistory
-        }
+        "title": title,
+        "date": date,
+        "image": image,
     }
 
 
-def search_search_history(uid, q):
+def get_handler(uid):
     EMPTY = {
         'statusCode': 200,
         'body': {
             'items': []
         }
     }
-    # Find products in user's wishlist
+
     response = dynamodb.query(
         TableName=SearchHistoryTable,
         KeyConditionExpression='uid = :v1',
@@ -79,6 +66,39 @@ def search_search_history(uid, q):
         return EMPTY
 
     items = response["Items"]
+
+    return {
+        'statusCode': 200,
+        'body': {
+            "items": list(map(lambda item: parse_item(item), items))
+        }
+    }
+
+
+def search_handler(uid, q):
+    EMPTY = {
+        'statusCode': 200,
+        'body': {
+            'items': []
+        }
+    }
+
+    response = dynamodb.query(
+        TableName=SearchHistoryTable,
+        KeyConditionExpression='uid = :v1',
+        ExpressionAttributeValues={
+            ':v1': {
+                'S': uid
+            }
+        }
+    )
+
+    if "Items" not in response or len(response["Items"]) == 0:
+        return EMPTY
+
+    items = response["Items"]
+    items = list(map(lambda item: parse_item(item), items))
+
     filtered_items = []
     for item in items:
         if q.lower() in item['q']['S'].lower():
@@ -107,7 +127,12 @@ def lambda_handler(event, context):
     method = parsedParams["method"]
 
     if method == "GET":
-        return get_search_history(uid)
-    elif method == "SEARCH":
+        return get_handler(uid)
+    if method == "SEARCH":
         query = parsedParams["q"]
-        return search_search_history(uid, query)
+        return search_handler(uid, query)
+
+    return {
+        'statusCode': 200,
+        'body': "hi"
+    }

@@ -282,14 +282,16 @@ def search_handler(uid, query):
     items = response[PRODUCT_TABLE]
     items = list(map(lambda item: parse_item(item), items))
     filtered_items = []
-    for i in items:
-        if query.lower() in i["name"].lower():
-            filtered_items.append(i)
+    for item in items:
+        if query.lower() in item["name"].lower():
+            filtered_items.append(item)
+
+    if not filtered_items:
+        return EMPTY
 
     return {
         'statusCode': 200,
         'body': {
-            "uid": uid,
             "items": filtered_items
         }
     }
