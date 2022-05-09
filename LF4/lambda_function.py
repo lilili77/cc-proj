@@ -55,8 +55,11 @@ def lambda_handler(event, context):
             }
 
             dynamodb.put_item(TableName=PRODUCTHISTORY_TABLE, Item=item_attr)
+            product["price"]["N"] = str(price)
+            dynamodb.put_item(TableName=PRODUCT_TABLE, Item=product)
 
     return {
         'statusCode': 200,
         'body': "Hello"
     }
+
